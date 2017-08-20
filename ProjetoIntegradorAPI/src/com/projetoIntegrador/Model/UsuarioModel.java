@@ -11,6 +11,7 @@ public class UsuarioModel {
 		
 	}
 	
+	private Integer id;
 	private String nome;
 	private Date dataAdmissao;
 	private ECargo cargo;
@@ -48,6 +49,12 @@ public class UsuarioModel {
 		this.senha = senha;
 	}	
 	
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub

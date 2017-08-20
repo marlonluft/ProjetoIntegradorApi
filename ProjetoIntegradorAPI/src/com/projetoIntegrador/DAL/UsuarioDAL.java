@@ -1,5 +1,6 @@
 package com.projetoIntegrador.DAL;
 
+import com.projetoIntegrador.Enumerador.ECargo;
 import com.projetoIntegrador.Model.UsuarioModel;
 
 public class UsuarioDAL {
@@ -24,9 +25,13 @@ public class UsuarioDAL {
 		return null;
 	}
 	
-	public static Boolean VerificarLogin(String email, String senha) {
+	public static UsuarioModel VerificarLogin(String email, String senha) {
 		
-		return email.equals("admin@admin") && senha.equals("admin");
+		UsuarioModel user = new UsuarioModel();
+		user.setCargo(ECargo.COLABORADOR);
+		user.setId(123);
+		
+		return email.equals("admin@admin") && senha.equals("admin") ? user : null;
 	}
 
 }

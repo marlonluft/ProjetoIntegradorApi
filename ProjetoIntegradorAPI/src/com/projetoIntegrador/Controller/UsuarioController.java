@@ -7,6 +7,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.projetoIntegrador.DAL.UsuarioDAL;
+import com.projetoIntegrador.Model.UsuarioModel;
 import com.projetoIntegrador.ViewModel.LoginViewModel;
 import com.projetoIntegrador.ViewModel.Retorno;
 
@@ -26,14 +27,22 @@ public class UsuarioController
 	@Path("/logar")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Retorno post(LoginViewModel model) {
-		Retorno retorno = new Retorno();
+	public LoginViewModel post(LoginViewModel model) {
+		LoginViewModel retorno = new LoginViewModel();
 
 		try {
-			retorno.Sucesso = UsuarioDAL.VerificarLogin(model.Email, model.Senha);
-
-			retorno.Mensagem = retorno.Sucesso ? "" : "Usuário ou senha inválido, tente novamente.";
-
+			UsuarioModel usuario = UsuarioDAL.VerificarLogin(model.Email, model.Senha);
+			
+			if (usuario != null) 
+			{
+				retorno.Sucesso = true;
+				retorno.Cargo = usuario.getCargo();
+				retorno.Id = usuario.getId();
+			}
+			else
+			{
+				retorno.Mensagem = retorno.Sucesso ? "" : "Usuário e/ou senha inválido, tente novamente.";
+			}
 		} catch (Exception e) {
 			retorno.Mensagem = "Erro ao realizar o logn, tente novamente. Erro: " + e.getMessage();
 		}
