@@ -9,6 +9,9 @@ GET:
 http://localhost:8080/ProjetoIntegradorAPI/rest/helloWorld/nome/testea
 
 POST
-http://localhost:8080/ProjetoIntegradorAPI/rest/helloWorld/post
-Enviar json EX: {"nome": "John"}
-retorna um json EX: { "nome": "John é o c@r@lh0, meu nome agora é zé pequeno" }
+http://localhost:8080/ProjetoIntegradorAPI/rest/usuario/logar
+Enviar json EX: {"Usuario": "admin", "Senha": "admin"}
+retorna um json EX: { "Mensagem": "", "Sucesso": true }
+
+Site:
+http://projetointegrador.azurewebsites.net/
