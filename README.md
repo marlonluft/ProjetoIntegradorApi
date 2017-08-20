@@ -13,5 +13,10 @@ http://localhost:8080/ProjetoIntegradorAPI/rest/usuario/logar
 Enviar json EX: {"Usuario": "admin", "Senha": "admin"}
 retorna um json EX: { "Mensagem": "", "Sucesso": true }
 
+Link Api publicada:
+http://104.41.50.175:8080/ProjetoIntegradorAPI/rest/usuario/logar
+Enviar json EX: {"Usuario": "admin", "Senha": "admin"}
+retorna um json EX: { "Mensagem": "", "Sucesso": true }
+
 Site:
 http://projetointegrador.azurewebsites.net/
