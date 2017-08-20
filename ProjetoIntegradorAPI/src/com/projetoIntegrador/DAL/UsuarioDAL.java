@@ -25,13 +25,29 @@ public class UsuarioDAL {
 		return null;
 	}
 	
-	public static UsuarioModel VerificarLogin(String email, String senha) {
+	public static UsuarioModel VerificarLogin(String email, String senha) 
+	{
 		
 		UsuarioModel user = new UsuarioModel();
-		user.setCargo(ECargo.COLABORADOR);
+		
+		switch (senha) {
+		case "admin":
+			user.setCargo(ECargo.ADMINISTRADOR);
+			break;
+			
+		case "gestor":
+			user.setCargo(ECargo.GESTOR);
+			break;
+			
+		default:
+		case "colab":
+			user.setCargo(ECargo.COLABORADOR);
+			break;
+		}
+		
 		user.setId(123);
 		
-		return email.equals("admin@admin") && senha.equals("admin") ? user : null;
+		return email.equals("admin@admin") && (senha.equals("admin") || senha.equals("gestor") || senha.equals("colab")) ? user : null;
 	}
 
 }

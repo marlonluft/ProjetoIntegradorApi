@@ -8,6 +8,11 @@
         </servlet-class>
         
         <init-param>
+            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-value>com.projetoIntegrador.Controller</param-value>
+        </init-param>
+        
+        <init-param>
   			<param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
   			<param-value>com.projetoIntegrador.Util.CORSFilter</param-value>
 		</init-param>
