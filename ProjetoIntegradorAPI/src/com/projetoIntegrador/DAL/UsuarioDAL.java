@@ -24,9 +24,9 @@ public class UsuarioDAL {
 		return null;
 	}
 	
-	public static Boolean VerificarLogin(String usuario, String senha) {
+	public static Boolean VerificarLogin(String email, String senha) {
 		
-		return usuario.equals("admin") && senha.equals("admin");
+		return email.equals("admin@admin") && senha.equals("admin");
 	}
 
 }

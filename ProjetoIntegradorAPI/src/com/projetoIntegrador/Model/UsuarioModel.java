@@ -14,7 +14,7 @@ public class UsuarioModel {
 	private String nome;
 	private Date dataAdmissao;
 	private ECargo cargo;
-	private String usuario;
+	private String email;
 	private String senha;
 	
 	public String getNome() {
@@ -35,11 +35,11 @@ public class UsuarioModel {
 	public void setCargo(ECargo cargo) {
 		this.cargo = cargo;
 	}
-	public String getUsuario() {
-		return usuario;
+	public String getEmail() {
+		return email;
 	}
-	public void setUsuario(String usuario) {
-		this.usuario = usuario;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	public String getSenha() {
 		return senha;

@@ -30,7 +30,7 @@ public class UsuarioController
 		Retorno retorno = new Retorno();
 
 		try {
-			retorno.Sucesso = UsuarioDAL.VerificarLogin(model.Usuario, model.Senha);
+			retorno.Sucesso = UsuarioDAL.VerificarLogin(model.Email, model.Senha);
 
 			retorno.Mensagem = retorno.Sucesso ? "" : "Usuário ou senha inválido, tente novamente.";
 

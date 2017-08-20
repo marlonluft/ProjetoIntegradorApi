@@ -5,6 +5,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class LoginViewModel {
-	@XmlElement public String Usuario;
+	@XmlElement public String Email;
 	@XmlElement public String Senha;
 }
