@@ -20,13 +20,6 @@ public class HelloWorldRestService {
  return "Hello "+name;
  }
  
- @GET
- @Produces(MediaType.TEXT_PLAIN)
- @Path("/testeget/{name}")
- public String testeget(@Context HttpHeaders headers, @PathParam("name") String name){
- return "Teste nome: "+name;
- }
- 
  
  @POST
  @Path("/post")
