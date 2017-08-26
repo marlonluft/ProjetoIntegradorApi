@@ -1,44 +1,38 @@
 package com.projetoIntegrador.Model;
 
 public class SetorModel {
-
-	public SetorModel()
-	{
-		
-	}
+	
+	public SetorModel(){}
 	
 	private Integer id;
-	private Integer idGestor;
-	private String nomeSetor;
-		
+	private String nome;
+	private Integer codGestor;
+	
+	public SetorModel(Integer id, String nome, Integer codGestor) {
+		this.id = id;
+		this.nome = nome;
+		this.codGestor = codGestor;
+	}
 	public Integer getId() {
 		return id;
 	}
-
 	public void setId(Integer id) {
 		this.id = id;
 	}
-
-	public Integer getIdGestor() {
-		return idGestor;
+	public String getNome() {
+		return nome;
 	}
-
-	public void setIdGestor(Integer idGestor) {
-		this.idGestor = idGestor;
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
-
-	public String getNomeSetor() {
-		return nomeSetor;
+	public Integer getCodGestor() {
+		return codGestor;
 	}
-
-	public void setNomeSetor(String nomeSetor) {
-		this.nomeSetor = nomeSetor;
+	public void setCodGestor(Integer codGestor) {
+		this.codGestor = codGestor;
 	}
-
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return super.toString();
+		return "SetorModel [id=" + id + ", nome=" + nome + ", codGestor=" + codGestor + "]";
 	}
-	
 }

@@ -1,6 +1,6 @@
 package com.projetoIntegrador.Model;
 
-import com.projetoIntegrador.Enumerador.EPerfil;
+import com.projetoIntegrador.Enumerador.ECargo;
 import com.projetoIntegrador.ViewModel.UsuarioViewModel;
 
 public class UsuarioModel {
@@ -12,27 +12,18 @@ public class UsuarioModel {
 	
 	public UsuarioModel(UsuarioViewModel model)
 	{
-		this.setPerfil(model.Perfil);
+		this.setCargo(model.Cargo);
 		this.setEmail(model.Email);
 		this.setId(model.Id == null ? 0 : model.Id);
-		this.setCodSetor(model.IdSetor == null ? 0 : model.IdSetor);
+		this.setIdSetor(model.IdSetor == null ? 0 : model.IdSetor);
 		this.setNome(model.Nome);
 		this.setSenha(model.Senha);		
 	}
-
-	public UsuarioModel(Integer id, String nome, String email, String senha, EPerfil perfil, Integer codSetor) {
-		this.id = id;
-		this.nome = nome;
-		this.email = email;
-		this.senha = senha;
-		this.perfil = perfil;
-		this.codSetor = codSetor;
-	}
 	
 	private Integer id;
-	private Integer codSetor;
+	private Integer idSetor;
 	private String nome;
-	private EPerfil perfil;
+	private ECargo cargo;
 	private String email;
 	private String senha;
 	
@@ -41,6 +32,12 @@ public class UsuarioModel {
 	}
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+	public ECargo getCargo() {
+		return cargo;
+	}
+	public void setCargo(ECargo cargo) {
+		this.cargo = cargo;
 	}
 	public String getEmail() {
 		return email;
@@ -60,25 +57,17 @@ public class UsuarioModel {
 	}
 	public void setId(Integer id) {
 		this.id = id;
-	}
+	}	
 	
-	public EPerfil getPerfil() {
-		return perfil;
+	public Integer getIdSetor() {
+		return idSetor;
 	}
-	public void setPerfil(EPerfil perfil) {
-		this.perfil = perfil;
+	public void setIdSetor(Integer idSetor) {
+		this.idSetor = idSetor;
 	}
-	public Integer getCodSetor() {
-		return codSetor;
-	}
-	public void setCodSetor(Integer codSetor) {
-		this.codSetor = codSetor;
-	}
-	
 	@Override
 	public String toString() {
-		return "UsuarioModel [id=" + id + ", nome=" + nome + ", email=" + email + ", senha=" + senha + ", perfil="
-				+ perfil + ", codSetor=" + codSetor + "]";
-	}
-			
+		// TODO Auto-generated method stub
+		return super.toString();
+	}	
 }

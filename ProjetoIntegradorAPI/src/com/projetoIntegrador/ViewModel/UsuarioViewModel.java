@@ -6,7 +6,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.projetoIntegrador.Enumerador.ECargo;
+import com.projetoIntegrador.Enumerador.EPerfil;
 import com.projetoIntegrador.Model.UsuarioModel;
 
 @XmlRootElement
@@ -19,21 +19,21 @@ public class UsuarioViewModel extends Retorno {
 	
 	public UsuarioViewModel (UsuarioModel model)
 	{
-		this.Cargo = model.getCargo();
+		this.Perfil = model.getPerfil();
 		this.Email = model.getEmail();
 		this.Id = model.getId();
-		this.IdSetor = model.getIdSetor();
+		this.IdSetor = model.getCodSetor();
 		this.Nome = model.getNome();
 		this.Senha = model.getSenha();	
 		
 		//this.Setor = SetorDAL.GetNome(this.IdSetor);
 		this.PodeRemover = true;
 		
-		if (this.Cargo == ECargo.ADMINISTRADOR) {
+		if (this.Perfil == EPerfil.ADMINISTRADOR) {
 			// verificar se é o único se for não pode excluir
 			this.PodeRemover = false;
 		}
-		else if (this.Cargo == ECargo.GESTOR)
+		else if (this.Perfil == EPerfil.GESTOR)
 		{
 			// verificar se não contém setores, se não conter pode excluir
 			this.PodeRemover = false;
@@ -54,7 +54,7 @@ public class UsuarioViewModel extends Retorno {
 	@XmlElement public Integer IdSetor;
 	@XmlElement public String Setor;
 	@XmlElement public String Nome;
-	@XmlElement public ECargo Cargo;
+	@XmlElement public EPerfil Perfil;
 	@XmlElement public String Email;
 	@XmlElement public String Senha;
 	@XmlElement public Boolean PodeRemover;

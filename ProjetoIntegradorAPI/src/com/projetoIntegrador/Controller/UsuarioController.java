@@ -9,6 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.projetoIntegrador.DAL.UsuarioDAL;
+import com.projetoIntegrador.Exceptions.BDException;
 import com.projetoIntegrador.Model.UsuarioModel;
 import com.projetoIntegrador.ViewModel.LoginViewModel;
 import com.projetoIntegrador.ViewModel.Retorno;
@@ -31,7 +32,7 @@ public class UsuarioController
 			if (usuario != null) 
 			{
 				retorno.Sucesso = true;
-				retorno.Cargo = usuario.getCargo();
+				retorno.Perfil = usuario.getPerfil();
 				retorno.Id = usuario.getId();
 			}
 			else
@@ -52,9 +53,18 @@ public class UsuarioController
 	@Produces(MediaType.APPLICATION_JSON)
 	public UsuarioViewModel Listar()
 	{		
-		List<UsuarioModel> lista = UsuarioDAL.Listar();
-		UsuarioViewModel retorno = new UsuarioViewModel(lista);
-		retorno.Sucesso = true;
+		UsuarioViewModel retorno;
+		
+		try {
+			List<UsuarioModel> lista = UsuarioDAL.Listar();
+			retorno = new UsuarioViewModel(lista);
+			retorno.Sucesso = true;
+			
+		} catch (BDException e) 
+		{
+			retorno = new UsuarioViewModel();
+			retorno.Mensagem = "Falha ao realizar a listagem de usuários.";
+		}
 		
 		return retorno;
 	}
@@ -65,8 +75,17 @@ public class UsuarioController
 	@Consumes(MediaType.APPLICATION_JSON)
 	public UsuarioViewModel Consultar(UsuarioViewModel model)
 	{
-		UsuarioModel usuario = UsuarioDAL.Buscar(model.Id);
-		return new UsuarioViewModel(usuario);
+		UsuarioModel usuario;
+		
+		try 
+		{
+			usuario = UsuarioDAL.Buscar(model.Id);
+			return new UsuarioViewModel(usuario);
+		} 
+		catch (BDException e) 
+		{
+			return new UsuarioViewModel();
+		}		
 	}
 
 	@POST

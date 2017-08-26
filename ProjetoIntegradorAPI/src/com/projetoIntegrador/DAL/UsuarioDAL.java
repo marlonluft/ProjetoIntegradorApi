@@ -1,90 +1,143 @@
 package com.projetoIntegrador.DAL;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.projetoIntegrador.Enumerador.ECargo;
+import com.projetoIntegrador.Conexao.Conexao;
+import com.projetoIntegrador.Enumerador.EPerfil;
+import com.projetoIntegrador.Exceptions.BDException;
+import com.projetoIntegrador.Exceptions.EErrosBD;
 import com.projetoIntegrador.Model.UsuarioModel;
+import com.projetoIntegrador.Util.Funcoes;
 
 public class UsuarioDAL {
 
-	public static Integer Inserir(UsuarioModel model) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public static UsuarioModel Buscar(Integer Id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public static Boolean Alterar(UsuarioModel model) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public static Boolean Deleter(Integer Id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	public static List<UsuarioModel> Listar() {
-		
-		List<UsuarioModel> lista = new ArrayList<UsuarioModel>();
-		
-		UsuarioModel user1 = new UsuarioModel();
-		user1.setCargo(ECargo.ADMINISTRADOR);
-		user1.setEmail("email@email.com");
-		user1.setId(0);
-		user1.setIdSetor(0);
-		user1.setNome("Nome");
-		user1.setSenha("senha");		
-		lista.add(user1);
-		
-		UsuarioModel user2 = new UsuarioModel();
-		user2.setCargo(ECargo.GESTOR);
-		user2.setEmail("email@email.com");
-		user2.setId(0);
-		user2.setIdSetor(0);
-		user2.setNome("Nome");
-		user2.setSenha("senha");		
-		lista.add(user2);
-		
-		UsuarioModel user3 = new UsuarioModel();
-		user3.setCargo(ECargo.COLABORADOR);
-		user3.setEmail("email@email.com");
-		user3.setId(0);
-		user3.setIdSetor(0);
-		user3.setNome("Nome");
-		user3.setSenha("senha");		
-		lista.add(user3);
-		 
-		return lista;
-	}
-	
-	public static UsuarioModel VerificarLogin(String email, String senha) 
-	{
-		
-		UsuarioModel user = new UsuarioModel();
-		
-		switch (senha) {
-		case "admin":
-			user.setCargo(ECargo.ADMINISTRADOR);
-			break;
+	public static Integer Inserir(UsuarioModel model) throws BDException {
+		Connection conexao = Conexao.getConexao();
+		try {
+			PreparedStatement pst = conexao.prepareStatement("INSERT INTO USUARIO (NOME, EMAIL, SENHA, PERFIL, COD_SETOR)"
+                                                            +"VALUES (?, ?, ?, ?, ?);");
 			
-		case "gestor":
-			user.setCargo(ECargo.GESTOR);
-			break;
-			
-		default:
-		case "colab":
-			user.setCargo(ECargo.COLABORADOR);
-			break;
+			pst.setString(1, model.getNome());
+			pst.setString(2, model.getEmail());
+			pst.setString(3, model.getSenha());
+			pst.setInt(4, model.getPerfil().getIndex());
+			pst.setInt(5, model.getCodSetor());
+			pst.executeUpdate();
+			return Funcoes.getId("USUARIO");
+		} catch (Exception e) {
+			throw new BDException(EErrosBD.INSERE_DADO, e.getMessage());
+		} finally {
+			Conexao.closeConexao();
 		}
+	}
+
+	public static UsuarioModel Buscar(Integer Id) throws BDException {
+		Connection conexao = Conexao.getConexao();
+		try {
+			PreparedStatement pst = conexao.prepareStatement("SELECT * FROM USUARIO WHERE ID = ?;");
+			pst.setInt(1, Id);
+			ResultSet rs = pst.executeQuery();
+			if (rs.first()) {
+				return new UsuarioModel(
+						rs.getInt("ID"), 
+						rs.getString("NOME"), 
+						rs.getString("EMAIL"), 
+						rs.getString("SENHA"), 
+						EPerfil.getEnum(rs.getInt("PERFIL")), 
+						rs.getInt("COD_SETOR"));
+			}
+			return null;
+ 		} catch (Exception e) {
+ 			throw new BDException(EErrosBD.CONSULTA, e.getMessage());
+ 		} finally {
+ 			Conexao.closeConexao();
+ 		}
+	}
+
+	public static Boolean Alterar(UsuarioModel model) throws BDException {
+		Connection conexao = Conexao.getConexao();
+		try {
+			PreparedStatement pst = conexao.prepareStatement("UPDATE USUARIO SET NOME = ?, EMAIL = ?, SENHA = ?, PERFIL = ?, COD_SETOR = ? WHERE ID = ?);");
+			pst.setString(1, model.getNome());
+			pst.setString(2, model.getEmail());
+			pst.setString(3, model.getSenha());
+			pst.setInt(4, model.getPerfil().getIndex());
+			pst.setInt(5, model.getCodSetor());
+			pst.setInt(8, model.getId());
+			return pst.executeUpdate() > 0;
+		} catch (Exception e) {
+			throw new BDException(EErrosBD.ATUALIZA, e.getMessage());
+		} finally {
+			Conexao.closeConexao();
+		}
+	}
+
+	public static Boolean Deleter(Integer Id) throws BDException {
+		Connection conexao = Conexao.getConexao();
+		try {
+			PreparedStatement pst = conexao.prepareStatement("DELETE FROM USUARIO WHERE ID = ?;");
+			pst.setInt(1, Id);
+			return pst.executeUpdate() > 0;
+		} catch (Exception e) {
+			throw new BDException(EErrosBD.EXCLUI, e.getMessage());
+		} finally {
+			Conexao.closeConexao();
+		}
+	}
+	
+	public static UsuarioModel VerificarLogin(String email, String senha) throws BDException 
+	{
+		Connection conexao = Conexao.getConexao();
 		
-		user.setId(123);
-		
-		return email.equals("admin@admin") && (senha.equals("admin") || senha.equals("gestor") || senha.equals("colab")) ? user : null;
+		try {
+			PreparedStatement pst = conexao.prepareStatement("SELECT * FROM USUARIO WHERE EMAIL = ? AND SENHA = ?;");
+			pst.setString(1, email);
+			pst.setString(2, senha);
+			ResultSet rs = pst.executeQuery();
+			if (rs.first()) {
+				return new UsuarioModel(
+						rs.getInt("ID"), 
+						rs.getString("NOME"), 
+						rs.getString("EMAIL"), 
+						rs.getString("SENHA"), 
+						EPerfil.getEnum(rs.getInt("PERFIL")), 
+						rs.getInt("COD_SETOR"));
+			}
+			return null;
+ 		} catch (Exception e) {
+ 			throw new BDException(EErrosBD.CONSULTA, e.getMessage());
+ 		} finally {
+ 			Conexao.closeConexao();
+ 		}
+	}
+	
+	
+	public static List<UsuarioModel> Listar() throws BDException {
+		Connection conexao = Conexao.getConexao();
+		try {
+			List<UsuarioModel> pessoas = new ArrayList<UsuarioModel>();
+			Statement st = conexao.createStatement();
+			ResultSet rs = st.executeQuery("SELECT * FROM USUARIO;");
+			while (rs.next()) {
+				pessoas.add(new UsuarioModel(
+						rs.getInt("ID"), 
+						rs.getString("NOME"), 
+						rs.getString("EMAIL"), 
+						rs.getString("SENHA"), 
+						EPerfil.getEnum(rs.getInt("PERFIL")), 
+						rs.getInt("COD_SETOR")));
+			}
+			return pessoas;
+		} catch (Exception e) {
+			throw new BDException(EErrosBD.CONSULTA, e.getMessage());
+		} finally {
+			Conexao.closeConexao();
+		}
 	}
 
 }
