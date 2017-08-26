@@ -1,19 +1,28 @@
 package com.projetoIntegrador.Model;
 
-import java.util.Date;
-
 import com.projetoIntegrador.Enumerador.ECargo;
+import com.projetoIntegrador.ViewModel.UsuarioViewModel;
 
 public class UsuarioModel {
 
-	public UsuarioModel()
+	public UsuarioModel ()
 	{
 		
 	}
 	
+	public UsuarioModel(UsuarioViewModel model)
+	{
+		this.setCargo(model.Cargo);
+		this.setEmail(model.Email);
+		this.setId(model.Id == null ? 0 : model.Id);
+		this.setIdSetor(model.IdSetor == null ? 0 : model.IdSetor);
+		this.setNome(model.Nome);
+		this.setSenha(model.Senha);		
+	}
+	
 	private Integer id;
+	private Integer idSetor;
 	private String nome;
-	private Date dataAdmissao;
 	private ECargo cargo;
 	private String email;
 	private String senha;
@@ -23,12 +32,6 @@ public class UsuarioModel {
 	}
 	public void setNome(String nome) {
 		this.nome = nome;
-	}
-	public Date getDataAdmissao() {
-		return dataAdmissao;
-	}
-	public void setDataAdmissao(Date dataAdmissao) {
-		this.dataAdmissao = dataAdmissao;
 	}
 	public ECargo getCargo() {
 		return cargo;
@@ -54,6 +57,13 @@ public class UsuarioModel {
 	}
 	public void setId(Integer id) {
 		this.id = id;
+	}	
+	
+	public Integer getIdSetor() {
+		return idSetor;
+	}
+	public void setIdSetor(Integer idSetor) {
+		this.idSetor = idSetor;
 	}
 	@Override
 	public String toString() {
