@@ -49,7 +49,7 @@ public class SetorViewModel extends Retorno {
 		
 		try 
 		{
-			this.PodeRemover = UsuarioDAL.GetQuantidadeColaboradores(this.Id) > 0;
+			this.PodeRemover = UsuarioDAL.GetQuantidadeColaboradores(this.Id) == 0;
 		}
 		catch (Exception e) {
 			this.PodeRemover = false;
