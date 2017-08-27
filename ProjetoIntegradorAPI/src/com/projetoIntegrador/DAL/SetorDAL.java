@@ -42,7 +42,7 @@ public class SetorDAL {
 				return new SetorModel(
 						rs.getInt("ID"), 
 						rs.getString("NOME"), 
-						rs.getInt("COD_GESTOR"));
+						rs.getInt("idusuario"));
 			}
 			return null;
  		} catch (Exception e) {
