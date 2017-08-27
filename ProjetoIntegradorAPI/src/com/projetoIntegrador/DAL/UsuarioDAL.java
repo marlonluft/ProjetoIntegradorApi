@@ -3,6 +3,7 @@ package com.projetoIntegrador.DAL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +26,16 @@ public class UsuarioDAL {
 			pst.setString(2, model.getEmail());
 			pst.setString(3, model.getSenha());
 			pst.setInt(4, model.getPerfil().getIndex());
-			pst.setInt(5, model.getCodSetor());
+			
+			if (model.getCodSetor() < 0)
+			{
+				pst.setNull(5, Types.INTEGER);
+			}
+			else
+			{
+				pst.setInt(5, model.getCodSetor());				
+			}
+			
 			pst.executeUpdate();
 			return Funcoes.getId("USUARIO");
 		} catch (Exception e) {
@@ -66,8 +76,18 @@ public class UsuarioDAL {
 			pst.setString(2, model.getEmail());
 			pst.setString(3, model.getSenha());
 			pst.setInt(4, model.getPerfil().getIndex());
-			pst.setInt(5, model.getCodSetor());
-			pst.setInt(8, model.getId());
+			
+			if (model.getCodSetor() < 0)
+			{
+				pst.setNull(5, Types.INTEGER);
+			}
+			else
+			{
+				pst.setInt(5, model.getCodSetor());				
+			}
+			
+			
+			pst.setInt(6, model.getId());
 			return pst.executeUpdate() > 0;
 		} catch (Exception e) {
 			throw new BDException(EErrosBD.ATUALIZA, e.getMessage());
@@ -205,7 +225,7 @@ public class UsuarioDAL {
 				return rs.getString("nome");
 			}
 			
-			return "Indisponível";
+			return null;
 			
  		} catch (Exception e) 
 		{

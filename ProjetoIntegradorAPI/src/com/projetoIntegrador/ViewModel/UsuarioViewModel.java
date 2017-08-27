@@ -49,7 +49,7 @@ public class UsuarioViewModel extends Retorno {
 		else if (this.Perfil == EPerfil.GESTOR)
 		{
 			// Verificar se não contém setores, se não conter pode excluir
-			this.PodeRemover = (this.Setor == null || this.Setor.length() == 0);
+			this.PodeRemover = (this.Setor == null || this.Setor.length() == 0 || this.Setor.equals("Indisponível"));
 		}
 	}
 	

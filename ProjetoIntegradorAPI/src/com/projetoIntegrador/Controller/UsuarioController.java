@@ -126,13 +126,13 @@ public class UsuarioController
 	@Path("/remover")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Retorno Remover (Integer id)
+	public Retorno Remover (UsuarioViewModel model)
 	{
 		Retorno retorno = new Retorno();
 		
 		try 
 		{
-			retorno.Sucesso = UsuarioDAL.Deleter(id);
+			retorno.Sucesso = UsuarioDAL.Deleter(model.Id);
 			
 			if (!retorno.Sucesso) {
 				retorno.Mensagem = "Houve um erro ao realiza a ação, favor contactar o suporte.";
