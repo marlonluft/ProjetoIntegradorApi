@@ -102,11 +102,11 @@ public class UsuarioController
 			
 			if (usuario.getId() >= 0) 
 			{
-				retorno.Sucesso = UsuarioDAL.Inserir(usuario) >= 0;
+				retorno.Sucesso = UsuarioDAL.Alterar(usuario);
 			}
 			else
-			{
-				retorno.Sucesso = UsuarioDAL.Alterar(usuario);
+			{				
+				retorno.Sucesso = UsuarioDAL.Inserir(usuario) >= 0;
 			}
 			
 			if (!retorno.Sucesso) {

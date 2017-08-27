@@ -14,8 +14,8 @@ public class UsuarioModel {
 	{
 		this.setPerfil(model.Perfil);
 		this.setEmail(model.Email);
-		this.setId(model.Id == null ? 0 : model.Id);
-		this.setCodSetor(model.IdSetor == null ? 0 : model.IdSetor);
+		this.setId(model.Id == null ? -1 : model.Id);
+		this.setCodSetor(model.IdSetor == null ? -1 : model.IdSetor);
 		this.setNome(model.Nome);
 		this.setSenha(model.Senha);		
 	}

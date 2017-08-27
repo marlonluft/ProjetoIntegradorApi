@@ -52,11 +52,11 @@ public class SetorController {
 			
 			if (setor.getId() >= 0) 
 			{
-				retorno.Sucesso = SetorDAL.Inserir(setor) >= 0;
+				retorno.Sucesso = SetorDAL.Alterar(setor);
 			}
 			else
-			{
-				retorno.Sucesso = SetorDAL.Alterar(setor);
+			{				
+				retorno.Sucesso = SetorDAL.Inserir(setor) >= 0;
 			}
 			
 			if (!retorno.Sucesso) {
@@ -76,13 +76,13 @@ public class SetorController {
 	@Path("/remover")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Retorno Remover (Integer id)
+	public Retorno Remover (SetorViewModel model)
 	{
 		Retorno retorno = new Retorno();
 		
 		try 
 		{
-			retorno.Sucesso = SetorDAL.Deleter(id);
+			retorno.Sucesso = SetorDAL.Deleter(model.Id);
 			
 			if (!retorno.Sucesso) {
 				retorno.Mensagem = "Houve um erro ao realiza a ação, favor contactar o suporte.";

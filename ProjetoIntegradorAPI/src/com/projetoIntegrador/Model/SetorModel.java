@@ -16,8 +16,8 @@ public class SetorModel {
 		this.idusuario = idusuario;
 	}
 	public SetorModel(SetorViewModel model) {
-		this.setId(model.Id == null ? 0 : model.Id);
-		this.setIdUsuario(model.IdGestor == null ? 0 : model.IdGestor);
+		this.setId(model.Id == null ? -1 : model.Id);
+		this.setIdUsuario(model.IdGestor == null ? -1 : model.IdGestor);
 		this.setNome(model.Nome);
 	}
 	

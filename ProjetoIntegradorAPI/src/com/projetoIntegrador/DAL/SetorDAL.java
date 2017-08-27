@@ -55,10 +55,10 @@ public class SetorDAL {
 	public static Boolean Alterar(SetorModel model) throws BDException {
 		Connection conexao = Conexao.getConexao();
 		try {
-			PreparedStatement pst = conexao.prepareStatement("UPDATE SETOR SET NOME = ?, idusuario = ? WHERE ID = ?);");
+			PreparedStatement pst = conexao.prepareStatement("UPDATE SETOR SET NOME = ?, idusuario = ? WHERE ID = ?;");
 			pst.setString(1, model.getNome());
-			pst.setInt(5, model.getIdUsuario());
-			pst.setInt(8, model.getId());
+			pst.setInt(2, model.getIdUsuario());
+			pst.setInt(3, model.getId());
 			return pst.executeUpdate() > 0;
 		} catch (Exception e) {
 			throw new BDException(EErrosBD.ATUALIZA, e.getMessage());
