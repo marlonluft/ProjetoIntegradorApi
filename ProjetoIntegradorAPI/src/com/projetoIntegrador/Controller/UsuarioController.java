@@ -145,4 +145,25 @@ public class UsuarioController
 		
 		return retorno;
 	}
+	
+	@POST
+	@Path("/listarGestores")
+	@Produces(MediaType.APPLICATION_JSON)
+	public UsuarioViewModel ListarGestores()
+	{		
+		UsuarioViewModel retorno;
+		
+		try {
+			List<UsuarioModel> lista = UsuarioDAL.Listar(true);
+			retorno = new UsuarioViewModel(lista);
+			retorno.Sucesso = true;
+			
+		} catch (BDException e) 
+		{
+			retorno = new UsuarioViewModel();
+			retorno.Mensagem = "Falha ao realizar a listagem de usuários.";
+		}
+		
+		return retorno;
+	}
 }

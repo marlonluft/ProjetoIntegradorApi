@@ -1,5 +1,7 @@
 package com.projetoIntegrador.Model;
 
+import com.projetoIntegrador.ViewModel.SetorViewModel;
+
 public class SetorModel {
 	
 	public SetorModel(){}
@@ -13,6 +15,12 @@ public class SetorModel {
 		this.nome = nome;
 		this.idusuario = idusuario;
 	}
+	public SetorModel(SetorViewModel model) {
+		this.setId(model.Id == null ? 0 : model.Id);
+		this.setIdUsuario(model.IdGestor == null ? 0 : model.IdGestor);
+		this.setNome(model.Nome);
+	}
+	
 	public Integer getId() {
 		return id;
 	}

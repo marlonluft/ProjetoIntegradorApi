@@ -3,7 +3,6 @@ package com.projetoIntegrador.DAL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,13 +115,28 @@ public class UsuarioDAL {
  		}
 	}
 	
-	
 	public static List<UsuarioModel> Listar() throws BDException {
+		return UsuarioDAL.Listar(false);
+	}
+	
+	public static List<UsuarioModel> Listar(Boolean somenteGestores) throws BDException {
 		Connection conexao = Conexao.getConexao();
 		try {
 			List<UsuarioModel> pessoas = new ArrayList<UsuarioModel>();
-			Statement st = conexao.createStatement();
-			ResultSet rs = st.executeQuery("SELECT * FROM USUARIO;");
+			
+			String query = "SELECT * FROM USUARIO WHERE 1=1";
+			
+			if (somenteGestores) {
+				query += " AND perfil = ?";
+			}
+			
+			PreparedStatement pst = conexao.prepareStatement(query);
+			
+			if (somenteGestores) {
+				pst.setInt(1, EPerfil.GESTOR.getIndex());
+			}
+			
+			ResultSet rs = pst.executeQuery();
 			while (rs.next()) {
 				pessoas.add(new UsuarioModel(
 						rs.getInt("ID"), 
@@ -154,6 +168,47 @@ public class UsuarioDAL {
 			return 0;
 			
  		} catch (Exception e) {
+ 			throw new BDException(EErrosBD.CONSULTA, e.getMessage());
+ 		} finally {
+ 			Conexao.closeConexao();
+ 		}
+	}
+
+	public static Integer GetQuantidadeColaboradores(Integer id) throws BDException {
+		Connection conexao = Conexao.getConexao();
+		try {
+			PreparedStatement pst = conexao.prepareStatement("SELECT COUNT(ID) as Qtd FROM USUARIO WHERE cod_setor = ?;");
+			pst.setInt(1, id);
+			ResultSet rs = pst.executeQuery();
+			
+			if (rs.first()) {
+				return rs.getInt("Qtd");
+			}
+			
+			return 0;
+			
+ 		} catch (Exception e) {
+ 			throw new BDException(EErrosBD.CONSULTA, e.getMessage());
+ 		} finally {
+ 			Conexao.closeConexao();
+ 		}
+	}
+
+	public static String GetNome(Integer idGestor) throws BDException {
+		Connection conexao = Conexao.getConexao();
+		try {
+			PreparedStatement pst = conexao.prepareStatement("SELECT nome FROM USUARIO WHERE id = ?;");
+			pst.setInt(1, idGestor);
+			ResultSet rs = pst.executeQuery();
+			
+			if (rs.first()) {
+				return rs.getString("nome");
+			}
+			
+			return "Indisponível";
+			
+ 		} catch (Exception e) 
+		{
  			throw new BDException(EErrosBD.CONSULTA, e.getMessage());
  		} finally {
  			Conexao.closeConexao();
