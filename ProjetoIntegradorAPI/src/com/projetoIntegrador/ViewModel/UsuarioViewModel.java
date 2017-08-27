@@ -6,6 +6,8 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.projetoIntegrador.DAL.SetorDAL;
+import com.projetoIntegrador.DAL.UsuarioDAL;
 import com.projetoIntegrador.Enumerador.EPerfil;
 import com.projetoIntegrador.Model.UsuarioModel;
 
@@ -26,17 +28,28 @@ public class UsuarioViewModel extends Retorno {
 		this.Nome = model.getNome();
 		this.Senha = model.getSenha();	
 		
-		//this.Setor = SetorDAL.GetNome(this.IdSetor);
+		try {
+			this.Setor = SetorDAL.GetNome(this.IdSetor);
+		}
+		catch (Exception e) {
+			this.Setor = "Indisponível";
+		}
+		
 		this.PodeRemover = true;
 		
 		if (this.Perfil == EPerfil.ADMINISTRADOR) {
-			// verificar se é o único se for não pode excluir
-			this.PodeRemover = false;
+			// Verificar se é o único se for não pode excluir
+			try {
+				this.PodeRemover = UsuarioDAL.GetQuantidadeAdministradores() > 1;
+			}
+			catch (Exception e) {
+				this.PodeRemover = false;
+			}
 		}
 		else if (this.Perfil == EPerfil.GESTOR)
 		{
-			// verificar se não contém setores, se não conter pode excluir
-			this.PodeRemover = false;
+			// Verificar se não contém setores, se não conter pode excluir
+			this.PodeRemover = (this.Setor == null || this.Setor.length() == 0);
 		}
 	}
 	

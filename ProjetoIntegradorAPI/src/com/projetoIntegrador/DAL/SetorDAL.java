@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import com.projetoIntegrador.Conexao.Conexao;
 import com.projetoIntegrador.Exceptions.BDException;
@@ -19,11 +18,11 @@ public class SetorDAL {
 	public static Integer Inserir(SetorModel model) throws BDException {
 		Connection conexao = Conexao.getConexao();
 		try {
-			PreparedStatement pst = conexao.prepareStatement("INSERT INTO SETOR (NOME, COD_GESTOR)"
+			PreparedStatement pst = conexao.prepareStatement("INSERT INTO SETOR (NOME, idusuario)"
                                                             +"VALUES (?, ?);");
 			
 			pst.setString(1, model.getNome());
-			pst.setInt(2, model.getCodGestor());
+			pst.setInt(2, model.getIdUsuario());
 			pst.executeUpdate();
 			return Funcoes.getId("SETOR");
 		} catch (Exception e) {
@@ -56,9 +55,9 @@ public class SetorDAL {
 	public static Boolean Alterar(SetorModel model) throws BDException {
 		Connection conexao = Conexao.getConexao();
 		try {
-			PreparedStatement pst = conexao.prepareStatement("UPDATE SETOR SET NOME = ?, COD_GESTOR = ? WHERE ID = ?);");
+			PreparedStatement pst = conexao.prepareStatement("UPDATE SETOR SET NOME = ?, idusuario = ? WHERE ID = ?);");
 			pst.setString(1, model.getNome());
-			pst.setInt(5, model.getCodGestor());
+			pst.setInt(5, model.getIdUsuario());
 			pst.setInt(8, model.getId());
 			return pst.executeUpdate() > 0;
 		} catch (Exception e) {
@@ -83,7 +82,7 @@ public class SetorDAL {
 	
 
 	
-	public List<SetorModel> Listar() throws BDException {
+	public static List<SetorModel> Listar() throws BDException {
 		Connection conexao = Conexao.getConexao();
 		try {
 			List<SetorModel> pessoas = new ArrayList<SetorModel>();
@@ -93,7 +92,7 @@ public class SetorDAL {
 				pessoas.add(new SetorModel(
 						rs.getInt("ID"), 
 						rs.getString("NOME"), 
-						rs.getInt("COD_GESTOR")));
+						rs.getInt("idusuario")));
 			}
 			return pessoas;
 		} catch (Exception e) {
@@ -102,6 +101,29 @@ public class SetorDAL {
 			Conexao.closeConexao();
 		}
 	}  
+	
+	public static String GetNome(Integer Id) throws BDException
+	{
+		Connection conexao = Conexao.getConexao();
+		try {
+			PreparedStatement pst = conexao.prepareStatement("SELECT nome FROM SETOR WHERE ID = ?;");
+			pst.setInt(1, Id);
+			ResultSet rs = pst.executeQuery();
+			if (rs.first()) 
+			{
+				return rs.getString("nome");
+			}
+			
+			return "Indisponível";
+ 		} catch (Exception e) 
+		{
+ 			throw new BDException(EErrosBD.CONSULTA, e.getMessage());
+ 		} 
+		finally 
+		{
+ 			Conexao.closeConexao();
+ 		}
+	}
 
 }
 

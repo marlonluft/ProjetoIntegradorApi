@@ -140,4 +140,24 @@ public class UsuarioDAL {
 		}
 	}
 
+	public static int GetQuantidadeAdministradores() throws BDException {
+		Connection conexao = Conexao.getConexao();
+		try {
+			PreparedStatement pst = conexao.prepareStatement("SELECT COUNT(ID) as Qtd FROM USUARIO WHERE perfil = ?;");
+			pst.setInt(1, EPerfil.ADMINISTRADOR.getIndex());
+			ResultSet rs = pst.executeQuery();
+			
+			if (rs.first()) {
+				return rs.getInt("Qtd");
+			}
+			
+			return 0;
+			
+ 		} catch (Exception e) {
+ 			throw new BDException(EErrosBD.CONSULTA, e.getMessage());
+ 		} finally {
+ 			Conexao.closeConexao();
+ 		}
+	}
+
 }
