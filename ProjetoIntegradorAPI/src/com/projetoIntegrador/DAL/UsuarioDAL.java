@@ -194,11 +194,11 @@ public class UsuarioDAL {
  		}
 	}
 
-	public static Integer GetQuantidadeColaboradores(Integer id) throws BDException {
+	public static Integer GetQuantidadeColaboradores(Integer codSetor) throws BDException {
 		Connection conexao = Conexao.getConexao();
 		try {
 			PreparedStatement pst = conexao.prepareStatement("SELECT COUNT(ID) as Qtd FROM USUARIO WHERE cod_setor = ?;");
-			pst.setInt(1, id);
+			pst.setInt(1, codSetor);
 			ResultSet rs = pst.executeQuery();
 			
 			if (rs.first()) {
