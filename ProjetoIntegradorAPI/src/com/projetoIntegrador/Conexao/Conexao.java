@@ -10,6 +10,7 @@ public class Conexao {
 
 	private static Connection conn = null;
 	private final static String SERVIDOR_BD = "projetointegradorbd.mysql.database.azure.com";
+	//private final static String SERVIDOR_BD = "localhost";
 	private final static int PORTA_BD = 3306;
 	private final static String DATABASE = "projetointegradordb";
 	private final static String USUARIO_BD = "projeto@projetointegradorbd";
