@@ -29,7 +29,7 @@ public class UsuarioController
 		LoginViewModel retorno = new LoginViewModel();
 
 		try {
-			UsuarioModel usuario = UsuarioDAL.VerificarLogin(model.Email, model.Senha);
+			UsuarioModel usuario = UsuarioDAL.VerificarLogin(model.CPF, model.Senha);
 			
 			if (usuario != null) 
 			{
@@ -133,12 +133,34 @@ public class UsuarioController
 					}
 					else
 					{
-						retorno.Sucesso = UsuarioDAL.Alterar(usuarioModel);
+						if (!usuario.getEmail().equals(usuarioModel.getEmail()) && UsuarioDAL.Existe(usuarioModel.getEmail()))
+						{
+							retorno.Mensagem = "E-mail já vinculado a outro usuário.";
+						}
+						else if (!usuario.getCpf().equals(usuarioModel.getCpf()) && UsuarioDAL.ExisteCPF(usuarioModel.getCpf()))
+						{
+							retorno.Mensagem = "CPF já vinculado a outro usuário.";							
+						}
+						else
+						{
+							retorno.Sucesso = UsuarioDAL.Alterar(usuarioModel);
+						}
 					}
 				}
 				else
 				{				
-					retorno.Sucesso = UsuarioDAL.Inserir(usuarioModel) >= 0;
+					if (UsuarioDAL.Existe(usuarioModel.getEmail()))
+					{
+						retorno.Mensagem = "E-mail já vinculado a outro usuário.";
+					}
+					else if (UsuarioDAL.ExisteCPF(usuarioModel.getCpf()))
+					{
+						retorno.Mensagem = "CPF já vinculado a outro usuário.";							
+					}
+					else
+					{
+						retorno.Sucesso = UsuarioDAL.Inserir(usuarioModel) >= 0;
+					}
 				}
 			}
 			

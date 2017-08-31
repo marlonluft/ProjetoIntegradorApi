@@ -9,6 +9,7 @@ import com.projetoIntegrador.Enumerador.EPerfil;
 public class LoginViewModel extends Retorno {
 	@XmlElement public String Email;
 	@XmlElement public String Senha;
+	@XmlElement public String CPF;
 	@XmlElement public Integer Id;
 	@XmlElement public EPerfil Perfil;
 }

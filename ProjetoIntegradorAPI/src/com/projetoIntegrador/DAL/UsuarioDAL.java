@@ -19,13 +19,14 @@ public class UsuarioDAL {
 	public static Integer Inserir(UsuarioModel model) throws BDException {
 		Connection conexao = Conexao.getConexao();
 		try {
-			PreparedStatement pst = conexao.prepareStatement("INSERT INTO USUARIO (NOME, EMAIL, SENHA, PERFIL, COD_SETOR)"
-                                                            +"VALUES (?, ?, ?, ?, ?);");
+			PreparedStatement pst = conexao.prepareStatement("INSERT INTO USUARIO (NOME, EMAIL, SENHA, PERFIL, COD_SETOR, CPF)"
+                                                            +"VALUES (?, ?, ?, ?, ?, ?);");
 			
 			pst.setString(1, model.getNome());
 			pst.setString(2, model.getEmail());
 			pst.setString(3, model.getSenha());
 			pst.setInt(4, model.getPerfil().getIndex());
+			pst.setString(6, model.getCpf());
 			
 			if (model.getCodSetor() < 0)
 			{
@@ -58,7 +59,8 @@ public class UsuarioDAL {
 						rs.getString("EMAIL"), 
 						rs.getString("SENHA"), 
 						EPerfil.getEnum(rs.getInt("PERFIL")), 
-						rs.getInt("COD_SETOR"));
+						rs.getInt("COD_SETOR"),
+						rs.getString("CPF"));
 			}
 			return null;
  		} catch (Exception e) {
@@ -71,11 +73,12 @@ public class UsuarioDAL {
 	public static Boolean Alterar(UsuarioModel model) throws BDException {
 		Connection conexao = Conexao.getConexao();
 		try {
-			PreparedStatement pst = conexao.prepareStatement("UPDATE USUARIO SET NOME = ?, EMAIL = ?, SENHA = ?, PERFIL = ?, COD_SETOR = ? WHERE ID = ?;");
+			PreparedStatement pst = conexao.prepareStatement("UPDATE USUARIO SET NOME = ?, EMAIL = ?, SENHA = ?, PERFIL = ?, COD_SETOR = ?, CPF = ? WHERE ID = ?;");
 			pst.setString(1, model.getNome());
 			pst.setString(2, model.getEmail());
 			pst.setString(3, model.getSenha());
 			pst.setInt(4, model.getPerfil().getIndex());
+			pst.setString(6, model.getCpf());
 			
 			if (model.getCodSetor() < 0)
 			{
@@ -87,7 +90,7 @@ public class UsuarioDAL {
 			}
 			
 			
-			pst.setInt(6, model.getId());
+			pst.setInt(7, model.getId());
 			return pst.executeUpdate() > 0;
 		} catch (Exception e) {
 			throw new BDException(EErrosBD.ATUALIZA, e.getMessage());
@@ -109,13 +112,13 @@ public class UsuarioDAL {
 		}
 	}
 	
-	public static UsuarioModel VerificarLogin(String email, String senha) throws BDException 
+	public static UsuarioModel VerificarLogin(String cpf, String senha) throws BDException 
 	{
 		Connection conexao = Conexao.getConexao();
 		
 		try {
-			PreparedStatement pst = conexao.prepareStatement("SELECT * FROM USUARIO WHERE EMAIL = ? AND SENHA = ?;");
-			pst.setString(1, email);
+			PreparedStatement pst = conexao.prepareStatement("SELECT * FROM USUARIO WHERE CPF = ? AND SENHA = ?;");
+			pst.setString(1, cpf);
 			pst.setString(2, senha);
 			ResultSet rs = pst.executeQuery();
 			if (rs.first()) {
@@ -125,7 +128,8 @@ public class UsuarioDAL {
 						rs.getString("EMAIL"), 
 						rs.getString("SENHA"), 
 						EPerfil.getEnum(rs.getInt("PERFIL")), 
-						rs.getInt("COD_SETOR"));
+						rs.getInt("COD_SETOR"),
+						rs.getString("CPF"));
 			}
 			return null;
  		} catch (Exception e) {
@@ -164,7 +168,8 @@ public class UsuarioDAL {
 						rs.getString("EMAIL"), 
 						rs.getString("SENHA"), 
 						EPerfil.getEnum(rs.getInt("PERFIL")), 
-						rs.getInt("COD_SETOR")));
+						rs.getInt("COD_SETOR"),
+						rs.getString("CPF")));
 			}
 			return pessoas;
 		} catch (Exception e) {
@@ -226,6 +231,48 @@ public class UsuarioDAL {
 			}
 			
 			return null;
+			
+ 		} catch (Exception e) 
+		{
+ 			throw new BDException(EErrosBD.CONSULTA, e.getMessage());
+ 		} finally {
+ 			Conexao.closeConexao();
+ 		}
+	}
+
+	public static boolean Existe(String email) throws BDException {
+		Connection conexao = Conexao.getConexao();
+		try {
+			PreparedStatement pst = conexao.prepareStatement("SELECT Id FROM USUARIO WHERE Email = ?;");
+			pst.setString(1, email);
+			ResultSet rs = pst.executeQuery();
+			
+			if (rs.first()) {
+				return true;
+			}
+			
+			return false;
+			
+ 		} catch (Exception e) 
+		{
+ 			throw new BDException(EErrosBD.CONSULTA, e.getMessage());
+ 		} finally {
+ 			Conexao.closeConexao();
+ 		}
+	}
+	
+	public static boolean ExisteCPF(String cpf) throws BDException {
+		Connection conexao = Conexao.getConexao();
+		try {
+			PreparedStatement pst = conexao.prepareStatement("SELECT Id FROM USUARIO WHERE CPF = ?;");
+			pst.setString(1, cpf);
+			ResultSet rs = pst.executeQuery();
+			
+			if (rs.first()) {
+				return true;
+			}
+			
+			return false;
 			
  		} catch (Exception e) 
 		{

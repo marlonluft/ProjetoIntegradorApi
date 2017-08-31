@@ -147,6 +147,29 @@ public class SetorDAL {
 		
 		return false;
 	}
+	
+	public static boolean Existe(String nome) throws BDException {
+		Connection conexao = Conexao.getConexao();
+		try {
+			PreparedStatement pst = conexao.prepareStatement("SELECT Id FROM SETOR WHERE Nome = ?;");
+			pst.setString(1, nome);
+			ResultSet rs = pst.executeQuery();
+			if (rs.first()) 
+			{
+				return true;
+			}		
+			
+ 		} catch (Exception e) 
+		{
+ 			throw new BDException(EErrosBD.CONSULTA, e.getMessage());
+ 		} 
+		finally 
+		{
+ 			Conexao.closeConexao();
+ 		}
+		
+		return false;
+	}
 
 }
 

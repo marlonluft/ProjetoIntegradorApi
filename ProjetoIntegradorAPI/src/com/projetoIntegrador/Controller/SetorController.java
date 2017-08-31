@@ -60,7 +60,7 @@ public class SetorController {
 				retorno.Mensagem = "O gestor selecionado não existe ou não contém o cargo de gestor.";
 			}
 			else
-			{			
+			{	
 				if (setorModel.getId() >= 0) 
 				{
 					SetorModel setor;
@@ -77,14 +77,25 @@ public class SetorController {
 					{
 						retorno.Mensagem = "Setor não encontrado para atualizar.";
 					}
+					else if (!setor.getNome().equals(setorModel.getNome()) && SetorDAL.Existe(setorModel.getNome()))
+					{
+						retorno.Mensagem = "Já existe um setor com este nome.";
+					}
 					else
-					{					
+					{
 						retorno.Sucesso = SetorDAL.Alterar(setorModel);
 					}
 				}
 				else
 				{				
-					retorno.Sucesso = SetorDAL.Inserir(setorModel) >= 0;
+					if (SetorDAL.Existe(setorModel.getNome()))
+					{
+						retorno.Mensagem = "Já existe um setor com este nome.";
+					}
+					else
+					{
+						retorno.Sucesso = SetorDAL.Inserir(setorModel) >= 0;
+					}					
 				}
 			}
 			

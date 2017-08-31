@@ -17,16 +17,18 @@ public class UsuarioModel {
 		this.setId(model.Id == null ? -1 : model.Id);
 		this.setCodSetor(model.IdSetor == null ? -1 : model.IdSetor);
 		this.setNome(model.Nome);
-		this.setSenha(model.Senha);		
+		this.setSenha(model.Senha);	
+		this.setCpf(model.CPF);
 	}
 
-	public UsuarioModel(Integer id, String nome, String email, String senha, EPerfil perfil, Integer codSetor) {
+	public UsuarioModel(Integer id, String nome, String email, String senha, EPerfil perfil, Integer codSetor, String cpf) {
 		this.id = id;
 		this.nome = nome;
 		this.email = email;
 		this.senha = senha;
 		this.perfil = perfil;
 		this.codSetor = codSetor;
+		this.cpf = cpf;
 	}
 	
 	private Integer id;
@@ -35,6 +37,7 @@ public class UsuarioModel {
 	private EPerfil perfil;
 	private String email;
 	private String senha;
+	private String cpf;
 	
 	public String getNome() {
 		return nome;
@@ -75,6 +78,14 @@ public class UsuarioModel {
 		this.codSetor = codSetor;
 	}
 	
+	public String getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
+
 	@Override
 	public String toString() {
 		return "UsuarioModel [id=" + id + ", nome=" + nome + ", email=" + email + ", senha=" + senha + ", perfil="

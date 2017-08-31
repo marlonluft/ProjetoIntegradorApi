@@ -27,6 +27,7 @@ public class UsuarioViewModel extends Retorno {
 		this.IdSetor = model.getCodSetor();
 		this.Nome = model.getNome();
 		this.Senha = model.getSenha();	
+		this.CPF = model.getCpf();
 		
 		try {
 			this.Setor = SetorDAL.GetNome(this.IdSetor);
@@ -71,6 +72,7 @@ public class UsuarioViewModel extends Retorno {
 	@XmlElement public String Email;
 	@XmlElement public String Senha;
 	@XmlElement public Boolean PodeRemover;
+	@XmlElement public String CPF;
 	
 	@XmlElement List<UsuarioViewModel> Lista;
 }
