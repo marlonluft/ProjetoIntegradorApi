@@ -21,7 +21,5 @@ public enum EPerfil {
                 return e;
         }
         return EPerfil.Null;
-    }
-	
-	
+    }	
 }
