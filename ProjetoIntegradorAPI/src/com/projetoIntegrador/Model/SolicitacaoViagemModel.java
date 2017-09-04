@@ -87,7 +87,7 @@ public class SolicitacaoViagemModel {
 		this.status = status;
 	}
 	public ArrayList<SolicitacaoCustoModel> getCustos() {
-		return custos;
+		return custos == null? new ArrayList<SolicitacaoCustoModel>() : custos;
 	}
 	public void setCustos(ArrayList<SolicitacaoCustoModel> custos) {
 		this.custos = custos;

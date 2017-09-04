@@ -37,7 +37,7 @@ public class SolicitacaoViagemViewModel extends Retorno {
 		this.IdUsuario = model.getIdUsuario();
 		this.Motivo = model.getMotivo();
 		this.Observacao = model.getObservacao();
-		this.Status = model.getStatus();
+		this.Status = model.getStatus().getIndex();
 		this.UfDestino = model.getUfDestino();
 		this.UfOrigem = model.getUfOrigem();		
 		
@@ -59,7 +59,7 @@ public class SolicitacaoViagemViewModel extends Retorno {
 	@XmlElement public Date DataVolta;
 	@XmlElement public String Motivo;
 	@XmlElement public String Observacao;
-	@XmlElement public EStatus Status;
+	@XmlElement public int Status;
 	@XmlElement public ArrayList<SolicitacaoCustoViewModel> Custos;
 	
 	@XmlElement List<SolicitacaoViagemViewModel> Lista;

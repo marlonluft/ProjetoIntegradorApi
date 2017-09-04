@@ -8,7 +8,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.projetoIntegrador.DAL.SolicitacaoViagemDAL;
-import com.projetoIntegrador.Exceptions.BDException;
 import com.projetoIntegrador.Model.SolicitacaoViagemModel;
 import com.projetoIntegrador.ViewModel.SolicitacaoViagemViewModel;
 
@@ -27,7 +26,7 @@ public class SolicitacaoController {
 			retorno = new SolicitacaoViagemViewModel(lista);
 			retorno.Sucesso = true;
 			
-		} catch (BDException e) 
+		} catch (Exception e) 
 		{
 			retorno = new SolicitacaoViagemViewModel();
 			retorno.Mensagem = "Falha ao realizar a listagem de usuários.";
