@@ -11,6 +11,14 @@ public class SolicitacaoCustoModel {
 	private float valorSolicitado;
 	private Float valorPrestado;
 	
+	public SolicitacaoCustoModel(int ID, int COD_SOLIC, ECusto TIPO, int quantidade, float valor_solic, float valor_prest) {
+		this.setId(ID);
+		this.setIdSolicitacao(COD_SOLIC);
+		this.setQuantidade(quantidade);
+		this.setTipo(TIPO);
+		this.setValorPrestado(valor_prest);
+		this.setValorSolicitado(valor_solic);
+	}
 	public int getId() {
 		return id;
 	}

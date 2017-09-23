@@ -20,6 +20,24 @@ public class SolicitacaoViagemModel {
 	private EStatus status;
 	private ArrayList<SolicitacaoCustoModel> custos;
 	
+	public SolicitacaoViagemModel(int ID, int cod_usuario, String cidade_origem, String uf_origem, String cidade_destino, String uf_destino,
+			Date data_Ida, Date data_volta, String motivo, String observacao, EStatus status,
+			ArrayList<SolicitacaoCustoModel> listaCustos) {
+		
+		this.setCidadeDestino(cidade_destino);
+		this.setCidadeOrigem(cidade_origem);
+		this.setCustos(listaCustos);
+		this.setDataIda(data_Ida);
+		this.setDataVolta(data_volta);
+		this.setId(ID);
+		this.setIdUsuario(cod_usuario);
+		this.setMotivo(motivo);
+		this.setObservacao(observacao);
+		this.setStatus(status);
+		this.setUfDestino(uf_destino);
+		this.setUfOrigem(uf_origem);		
+		
+	}
 	public int getId() {
 		return id;
 	}

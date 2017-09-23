@@ -1,68 +1,142 @@
 package com.projetoIntegrador.DAL;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.projetoIntegrador.Conexao.Conexao;
 import com.projetoIntegrador.Enumerador.EStatus;
 import com.projetoIntegrador.Exceptions.BDException;
+import com.projetoIntegrador.Exceptions.EErrosBD;
+import com.projetoIntegrador.Model.SolicitacaoCustoModel;
 import com.projetoIntegrador.Model.SolicitacaoViagemModel;
+import com.projetoIntegrador.Util.Funcoes;
 
 public class SolicitacaoViagemDAL {
-
-	public static List<SolicitacaoViagemModel> Listar() throws BDException, ParseException {
-		List<SolicitacaoViagemModel> lista = new ArrayList<SolicitacaoViagemModel>();
-		
-		for (int i = 0; i < 10; i++) {
+	
+	
+	
+	public static Integer Inserir(SolicitacaoViagemModel model) throws BDException {
+		Connection conexao = Conexao.getConexao();
+		try {
+			PreparedStatement pst = conexao.prepareStatement("INSERT INTO SOLICITACAO (cod_usuario, cidade_origem, uf_origem, cidade_destino, uf_destino, data_ida, data_volta, motivo, observacao, status)"
+                                                            +"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
 			
-			SolicitacaoViagemModel model = new SolicitacaoViagemModel();
-			model.setCidadeDestino("CidadeDestino"+i);
-			model.setCidadeOrigem("CidadeOrigem"+i);
-			model.setId(i);
-			model.setIdUsuario(i+1);
-			model.setMotivo("Motivo");
-			model.setObservacao("Observacao");			
-			model.setUfDestino("SC");
-			model.setUfOrigem("RS");	
-			
-			if (i <= 1) {
-				model.setStatus(EStatus.AGUARDANDO_APROVACAO_CONTAS);
-			}
-			else if (i > 3)
-			{
-				model.setStatus(EStatus.AGUARDANDO_APROVACAO_VIAGEM);
-			}
-			else if (i == 6)
-			{
-				model.setStatus(EStatus.EM_ABERTO);
-			}
-			else if (i == 7)
-			{
-				model.setStatus(EStatus.FINALIZADO);
-			}
-			else if (i == 8)
-			{
-				model.setStatus(EStatus.RECUSADO_VIAGEM);
-			}
-			else if (i == 2)
-			{
-				model.setStatus(EStatus.EM_ABERTO_CONTAS);
-			}
-			else
-			{
-				model.setStatus(EStatus.RECUSADO_CONTAS);				
-			}
-			
-			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-			model.setDataIda(formatter.parse("0" + (i+1) + "/01/2007"));
-			
-			model.setDataVolta(formatter.parse("0" + (i+3) + "/01/2007"));
-			
-			lista.add(model);
+			pst.setInt(1, model.getIdUsuario());
+			pst.setString(2, model.getCidadeOrigem());
+			pst.setString(3, model.getUfOrigem());
+			pst.setString(4, model.getCidadeDestino());
+			pst.setString(5, model.getUfDestino());
+			pst.setDate(6, Funcoes.getDateSQL(model.getDataIda()));
+			pst.setDate(7, Funcoes.getDateSQL(model.getDataVolta()));
+			pst.setString(8, model.getMotivo());
+			pst.setString(9, model.getObservacao());
+			pst.setInt(10, model.getStatus().getIndex());	
+			pst.executeUpdate();
+			return Funcoes.getId("SOLICITACAO");
+		} catch (Exception e) {
+			throw new BDException(EErrosBD.INSERE_DADO, e.getMessage());
+		} finally {
+			Conexao.closeConexao();
 		}
-		
-		return lista;
 	}
+
+	public static SolicitacaoViagemModel Buscar(Integer Id) throws BDException {
+		Connection conexao = Conexao.getConexao();
+		try {
+			PreparedStatement pst = conexao.prepareStatement("SELECT * FROM SOLICITACAO WHERE ID = ?;");
+			pst.setInt(1, Id);
+			ResultSet rs = pst.executeQuery();
+			if (rs.first()) {
+				return new SolicitacaoViagemModel(rs.getInt("ID"),
+						                           rs.getInt("cod_usuario"),
+                                                   rs.getString("cidade_origem"), 
+                                                   rs.getString("uf_origem"), 
+                                                   rs.getString("cidade_destino"),
+                                                   rs.getString("uf_destino"), 
+			                                       rs.getDate("data_Ida"), 
+			                                       rs.getDate("data_volta"),
+			                                       rs.getString("motivo"), 
+			                                       rs.getString("observacao"), 
+			                                       EStatus.getEnum(rs.getInt("status")),
+                                                   (ArrayList<SolicitacaoCustoModel>) SolicitacaoCustoDAL.ListarPorSolicitacao(rs.getInt("ID"))); 			
+			}
+			return null;
+ 		} catch (Exception e) {
+ 			throw new BDException(EErrosBD.CONSULTA, e.getMessage());
+ 		} finally {
+ 			Conexao.closeConexao();
+ 		}
+	}
+
+	public static Boolean Alterar(SolicitacaoViagemModel model) throws BDException {
+		Connection conexao = Conexao.getConexao();
+		try {
+			PreparedStatement pst = conexao.prepareStatement("UPDATE SOLICITACAO SET cod_usuario = ?, cidade_origem = ?, uf_origem = ?, cidade_destino = ?, uf_destino = ?, data_ida = ?, data_volta = ?, motivo = ?, observacao = ? , status = ? WHERE ID = ?;");
+			pst.setInt(1, model.getIdUsuario());
+			pst.setString(2, model.getCidadeOrigem());
+			pst.setString(3, model.getUfOrigem());
+			pst.setString(4, model.getCidadeDestino());
+			pst.setString(5, model.getUfDestino());
+			pst.setDate(6, Funcoes.getDateSQL(model.getDataIda()));
+			pst.setDate(7, Funcoes.getDateSQL(model.getDataVolta()));
+			pst.setString(8, model.getMotivo());
+			pst.setString(9, model.getObservacao());
+			pst.setInt(10, model.getStatus().getIndex());
+			pst.setInt(11, model.getId());
+			return pst.executeUpdate() > 0;
+		} catch (Exception e) {
+			throw new BDException(EErrosBD.ATUALIZA, e.getMessage());
+		} finally {
+			Conexao.closeConexao();
+		}
+	}
+
+	public static Boolean Deleter(Integer Id) throws BDException {
+		Connection conexao = Conexao.getConexao();
+		try {
+			PreparedStatement pst = conexao.prepareStatement("DELETE FROM SOLICITACAO WHERE ID = ?;");
+			pst.setInt(1, Id);
+			return pst.executeUpdate() > 0;
+		} catch (Exception e) {
+			throw new BDException(EErrosBD.EXCLUI, e.getMessage());
+		} finally {
+			Conexao.closeConexao();
+		}
+	}
+	
+
+	
+	public static List<SolicitacaoViagemModel> Listar(int idUsuario) throws BDException {
+		Connection conexao = Conexao.getConexao();
+		try {
+			List<SolicitacaoViagemModel> pessoas = new ArrayList<SolicitacaoViagemModel>();
+			PreparedStatement pst = conexao.prepareStatement("SELECT * FROM SOLICITACAO WHERE idUsuario = ?;");
+			pst.setInt(1, idUsuario);
+			ResultSet rs = pst.executeQuery();			
+			
+			while (rs.next()) {
+				pessoas.add(new SolicitacaoViagemModel(rs.getInt("ID"),
+                        rs.getInt("cod_usuario"),
+                        rs.getString("cidade_origem"), 
+                        rs.getString("uf_origem"), 
+                        rs.getString("cidade_destino"),
+                        rs.getString("uf_destino"), 
+                        rs.getDate("data_Ida"), 
+                        rs.getDate("data_volta"),
+                        rs.getString("motivo"), 
+                        rs.getString("observacao"), 
+                        EStatus.getEnum(rs.getInt("status")),
+                        (ArrayList<SolicitacaoCustoModel>) SolicitacaoCustoDAL.ListarPorSolicitacao(rs.getInt("ID"))));
+			}
+			return pessoas;
+		} catch (Exception e) {
+			throw new BDException(EErrosBD.CONSULTA, e.getMessage());
+		} finally {
+			Conexao.closeConexao();
+		}
+	}  
 
 }
