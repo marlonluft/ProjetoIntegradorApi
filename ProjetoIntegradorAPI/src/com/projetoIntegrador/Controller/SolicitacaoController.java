@@ -33,7 +33,7 @@ public class SolicitacaoController {
 		} catch (Exception e) 
 		{
 			retorno = new SolicitacaoViagemViewModel();
-			retorno.Mensagem = "Falha ao realizar a listagem de usuários.";
+			retorno.Mensagem = "Falha ao realizar a listagem de solicitações de viagem.";
 		}
 		
 		return retorno;
@@ -51,12 +51,40 @@ public class SolicitacaoController {
 			
 			SolicitacaoViagemModel model = new SolicitacaoViagemModel(solicitacao);
 			
+			int id = SolicitacaoViagemDAL.Inserir(model);
+			
 			
 			retorno.Sucesso = true;
 			
 		} catch (Exception e) 
 		{
 			retorno.Mensagem = "Falha ao realizar ao salvar a solicitação de viagem.";
+		}
+		
+		return retorno;
+	}
+	
+	@POST
+	@Path("/remover")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Retorno Remover(String id)
+	{		
+		Retorno retorno = new Retorno();
+		
+		try {
+			if (SolicitacaoViagemDAL.Deleter(Integer.parseInt(id)))
+			{
+				retorno.Sucesso = true;
+			}
+			else
+			{
+				retorno.Mensagem = "A solicitação de viagem a ser removida não foi encontrada.";
+			}			
+			
+		} catch (Exception e) 
+		{
+			retorno.Mensagem = "Falha ao realizar a removção de solicitação de viagem.";
 		}
 		
 		return retorno;

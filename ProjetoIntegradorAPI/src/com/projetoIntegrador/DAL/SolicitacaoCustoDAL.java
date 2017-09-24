@@ -21,7 +21,7 @@ public class SolicitacaoCustoDAL {
 	public static Integer Inserir(SolicitacaoCustoModel model) throws BDException {
 		Connection conexao = Conexao.getConexao();
 		try {
-			PreparedStatement pst = conexao.prepareStatement("INSERT INTO CUSTOS (cod_solic, tipo, quantidade, valor_solic, valor_prest)"
+			PreparedStatement pst = conexao.prepareStatement("INSERT INTO CUSTOS (idsolicitacao, tipo, quantidade, valor_solic, valor_prest)"
                                                             +"VALUES (?, ?, ?, ?, ?);");
 			pst.setInt(1, model.getIdSolicitacao());
 			pst.setInt(2, model.getTipo().getIndex());
@@ -45,7 +45,7 @@ public class SolicitacaoCustoDAL {
 			ResultSet rs = pst.executeQuery();
 			if (rs.first()) {
 				return new SolicitacaoCustoModel(rs.getInt("ID"), 
-					                           	 rs.getInt("COD_SOLIC"), 
+					                           	 rs.getInt("idsolicitacao"), 
 					                           	 ECusto.getEnum(rs.getInt("TIPO")), 
 					                           	 rs.getInt("quantidade"), 
 					                           	 rs.getFloat("valor_solic"),
@@ -62,7 +62,7 @@ public class SolicitacaoCustoDAL {
 	public static Boolean Alterar(SolicitacaoCustoModel model) throws BDException {
 		Connection conexao = Conexao.getConexao();
 		try {
-			PreparedStatement pst = conexao.prepareStatement("UPDATE CUSTOS SET cod_solic = ?, tipo = ?, quantidade = ?, valor_solic = ?, valor_prest = ? WHERE ID = ?;");
+			PreparedStatement pst = conexao.prepareStatement("UPDATE CUSTOS SET idsolicitacao = ?, tipo = ?, quantidade = ?, valor_solic = ?, valor_prest = ? WHERE ID = ?;");
 			pst.setInt(1, model.getIdSolicitacao());
 			pst.setInt(2, model.getTipo().getIndex());
 			pst.setInt(3, model.getQuantidade());
@@ -91,6 +91,19 @@ public class SolicitacaoCustoDAL {
 		}
 	}
 	
+	public static Boolean DeleterPorSolicitacao(Integer Id) throws BDException {
+		Connection conexao = Conexao.getConexao();
+		try {
+			PreparedStatement pst = conexao.prepareStatement("DELETE FROM CUSTOS WHERE idsolicitacao = ?;");
+			pst.setInt(1, Id);
+			return pst.executeUpdate() > 0;
+		} catch (Exception e) {
+			throw new BDException(EErrosBD.EXCLUI, e.getMessage());
+		} finally {
+			Conexao.closeConexao();
+		}
+	}
+	
 
 	
 	public static List<SolicitacaoCustoModel> Listar() throws BDException {
@@ -101,7 +114,7 @@ public class SolicitacaoCustoDAL {
 			ResultSet rs = st.executeQuery("SELECT * FROM CUSTOS;");
 			while (rs.next()) {
 				pessoas.add(new SolicitacaoCustoModel(rs.getInt("ID"), 
-                      	 rs.getInt("COD_SOLIC"), 
+                      	 rs.getInt("idsolicitacao"), 
                       	 ECusto.getEnum(rs.getInt("TIPO")), 
                       	 rs.getInt("quantidade"), 
                       	 rs.getFloat("valor_solic"),
@@ -120,12 +133,12 @@ public class SolicitacaoCustoDAL {
 		try {
 			List<SolicitacaoCustoModel> pessoas = new ArrayList<SolicitacaoCustoModel>();
 
-			PreparedStatement pst = conexao.prepareStatement("SELECT * FROM CUSTOS WHERE COD_SOLIC = ?;");
+			PreparedStatement pst = conexao.prepareStatement("SELECT * FROM CUSTOS WHERE idsolicitacao = ?;");
 			pst.setInt(1, idSolicitacao);
 			ResultSet rs = pst.executeQuery();
 			while (rs.next()) {
 				pessoas.add(new SolicitacaoCustoModel(rs.getInt("ID"), 
-                      	 rs.getInt("COD_SOLIC"), 
+                      	 rs.getInt("idsolicitacao"), 
                       	 ECusto.getEnum(rs.getInt("TIPO")), 
                       	 rs.getInt("quantidade"), 
                       	 rs.getFloat("valor_solic"),
