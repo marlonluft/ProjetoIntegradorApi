@@ -11,6 +11,11 @@ import com.projetoIntegrador.Model.SolicitacaoCustoModel;
 @XmlRootElement
 public class SolicitacaoCustoViewModel extends Retorno {
 
+	public SolicitacaoCustoViewModel()
+	{
+		
+	}
+	
 	public SolicitacaoCustoViewModel(SolicitacaoCustoModel model) {
 		this.Id = model.getId();
 		this.IdSolicitacao = model.getIdSolicitacao();

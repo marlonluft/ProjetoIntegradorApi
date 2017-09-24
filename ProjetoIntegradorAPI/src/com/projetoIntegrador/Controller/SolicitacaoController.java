@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
 
 import com.projetoIntegrador.DAL.SolicitacaoViagemDAL;
 import com.projetoIntegrador.Model.SolicitacaoViagemModel;
+import com.projetoIntegrador.ViewModel.Retorno;
 import com.projetoIntegrador.ViewModel.SolicitacaoViagemViewModel;
 
 @Path("/solicitacao")
@@ -33,6 +34,29 @@ public class SolicitacaoController {
 		{
 			retorno = new SolicitacaoViagemViewModel();
 			retorno.Mensagem = "Falha ao realizar a listagem de usuários.";
+		}
+		
+		return retorno;
+	}
+
+	@POST
+	@Path("/salvar")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Retorno Salvar(SolicitacaoViagemViewModel solicitacao)
+	{		
+		Retorno retorno = new Retorno();
+		
+		try {
+			
+			SolicitacaoViagemModel model = new SolicitacaoViagemModel(solicitacao);
+			
+			
+			retorno.Sucesso = true;
+			
+		} catch (Exception e) 
+		{
+			retorno.Mensagem = "Falha ao realizar ao salvar a solicitação de viagem.";
 		}
 		
 		return retorno;

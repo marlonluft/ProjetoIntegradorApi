@@ -1,6 +1,7 @@
 package com.projetoIntegrador.Model;
 
 import com.projetoIntegrador.Enumerador.ECusto;
+import com.projetoIntegrador.ViewModel.SolicitacaoCustoViewModel;
 
 public class SolicitacaoCustoModel {
 
@@ -18,6 +19,14 @@ public class SolicitacaoCustoModel {
 		this.setTipo(TIPO);
 		this.setValorPrestado(valor_prest);
 		this.setValorSolicitado(valor_solic);
+	}
+	public SolicitacaoCustoModel(SolicitacaoCustoViewModel model) {
+		this.setId(model.Id);
+		this.setIdSolicitacao(model.IdSolicitacao);
+		this.setQuantidade(model.Quantidade);
+		this.setTipo(model.Tipo);
+		this.setValorPrestado(model.ValorPrestado);
+		this.setValorSolicitado(model.ValorSolicitado);
 	}
 	public int getId() {
 		return id;

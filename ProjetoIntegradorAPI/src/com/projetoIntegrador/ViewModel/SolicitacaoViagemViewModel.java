@@ -54,12 +54,18 @@ public class SolicitacaoViagemViewModel extends Retorno {
 	@XmlElement public String UfOrigem;
 	@XmlElement public String CidadeDestino;
 	@XmlElement public String UfDestino;
+	
 	@XmlElement public Date DataIda;
 	@XmlElement public Date DataVolta;
+	
+	@XmlElement public String DataIdaS;
+	@XmlElement public String DataVoltaS;
+	
 	@XmlElement public String Motivo;
 	@XmlElement public String Observacao;
 	@XmlElement public int Status;
 	@XmlElement public ArrayList<SolicitacaoCustoViewModel> Custos;
+	@XmlElement public String Justificativa;
 	
 	@XmlElement List<SolicitacaoViagemViewModel> Lista;
 	

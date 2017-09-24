@@ -61,6 +61,7 @@ public class SolicitacaoViagemDAL {
 			                                       rs.getString("motivo"), 
 			                                       rs.getString("observacao"), 
 			                                       EStatus.getEnum(rs.getInt("status")),
+			                                       "",
                                                    (ArrayList<SolicitacaoCustoModel>) SolicitacaoCustoDAL.ListarPorSolicitacao(rs.getInt("ID"))); 			
 			}
 			return null;
@@ -129,6 +130,7 @@ public class SolicitacaoViagemDAL {
                         rs.getString("motivo"), 
                         rs.getString("observacao"), 
                         EStatus.getEnum(rs.getInt("status")),
+                        "",
                         (ArrayList<SolicitacaoCustoModel>) SolicitacaoCustoDAL.ListarPorSolicitacao(rs.getInt("ID"))));
 			}
 			return pessoas;

@@ -1,9 +1,11 @@
 package com.projetoIntegrador.Model;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 import com.projetoIntegrador.Enumerador.EStatus;
+import com.projetoIntegrador.ViewModel.SolicitacaoViagemViewModel;
 
 public class SolicitacaoViagemModel {
 
@@ -18,10 +20,11 @@ public class SolicitacaoViagemModel {
 	private String motivo;
 	private String observacao;
 	private EStatus status;
+	private String justificativa;
 	private ArrayList<SolicitacaoCustoModel> custos;
 	
 	public SolicitacaoViagemModel(int ID, int cod_usuario, String cidade_origem, String uf_origem, String cidade_destino, String uf_destino,
-			Date data_Ida, Date data_volta, String motivo, String observacao, EStatus status,
+			Date data_Ida, Date data_volta, String motivo, String observacao, EStatus status, String justificativa,
 			ArrayList<SolicitacaoCustoModel> listaCustos) {
 		
 		this.setCidadeDestino(cidade_destino);
@@ -35,9 +38,37 @@ public class SolicitacaoViagemModel {
 		this.setObservacao(observacao);
 		this.setStatus(status);
 		this.setUfDestino(uf_destino);
-		this.setUfOrigem(uf_origem);		
+		this.setUfOrigem(uf_origem);
+		this.setJustificativa(justificativa);
 		
 	}
+	
+	public SolicitacaoViagemModel(SolicitacaoViagemViewModel model) throws Exception
+	{
+		this.setCidadeDestino(model.CidadeDestino);
+		this.setCidadeOrigem(model.CidadeOrigem);
+		this.setId(model.Id);
+		this.setIdUsuario(model.IdUsuario);
+		this.setJustificativa(model.Justificativa);
+		this.setMotivo(model.Motivo);
+		this.setObservacao(model.Observacao);
+		this.setStatus(EStatus.getEnum(model.Status));
+		this.setUfDestino(model.UfDestino);
+		this.setUfOrigem(model.UfOrigem);
+		
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+		
+		this.setDataIda(new java.sql.Date(format.parse(model.DataIdaS).getTime()));
+		this.setDataVolta(new java.sql.Date(format.parse(model.DataVoltaS).getTime()));
+		
+		this.custos = new ArrayList<SolicitacaoCustoModel>();
+		
+		for (int i = 0; i < model.Custos.size(); i++) 
+		{
+			this.custos.add(new SolicitacaoCustoModel(model.Custos.get(i)));
+		}
+	}
+	
 	public int getId() {
 		return id;
 	}
@@ -111,10 +142,16 @@ public class SolicitacaoViagemModel {
 		this.custos = custos;
 	}
 	
+	public String getJustificativa() {
+		return justificativa;
+	}
+	public void setJustificativa(String justificativa) {
+		this.justificativa = justificativa;
+	}
+	
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
 		return super.toString();
-	}	
-	
+	}
 }
