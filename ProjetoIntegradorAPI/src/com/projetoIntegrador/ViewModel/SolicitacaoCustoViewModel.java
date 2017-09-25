@@ -23,11 +23,13 @@ public class SolicitacaoCustoViewModel extends Retorno {
 		this.Tipo = model.getTipo();
 		this.ValorPrestado = model.getValorPrestado();
 		this.ValorSolicitado = model.getValorSolicitado();
+		this.TipoI = model.getTipo().ordinal();
 	}
 
 	@XmlElement public int Id;
 	@XmlElement public int IdSolicitacao;
 	@XmlElement public ECusto Tipo;
+	@XmlElement public int TipoI;
 	@XmlElement public int Quantidade;
 	@XmlElement public float ValorSolicitado;
 	@XmlElement public Float ValorPrestado;

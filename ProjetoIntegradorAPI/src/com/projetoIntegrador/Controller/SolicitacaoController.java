@@ -10,7 +10,11 @@ import javax.ws.rs.core.MediaType;
 import javax.xml.bind.annotation.XmlElement;
 
 import com.projetoIntegrador.DAL.SolicitacaoViagemDAL;
+import com.projetoIntegrador.DAL.UsuarioDAL;
+import com.projetoIntegrador.Enumerador.EPerfil;
+import com.projetoIntegrador.Enumerador.EStatus;
 import com.projetoIntegrador.Model.SolicitacaoViagemModel;
+import com.projetoIntegrador.Model.UsuarioModel;
 import com.projetoIntegrador.ViewModel.Retorno;
 import com.projetoIntegrador.ViewModel.SolicitacaoViagemViewModel;
 
@@ -26,7 +30,22 @@ public class SolicitacaoController {
 		SolicitacaoViagemViewModel retorno;
 		
 		try {
-			List<SolicitacaoViagemModel> lista = SolicitacaoViagemDAL.Listar(idUsuario);
+			List<SolicitacaoViagemModel> lista = null;
+			
+			UsuarioModel usuario = UsuarioDAL.Buscar(idUsuario);
+			if (usuario == null)
+			{
+				throw new Exception("Usuário logado não encontrado.");
+			}
+			else if (usuario.getPerfil() == EPerfil.GESTOR)
+			{
+				lista = SolicitacaoViagemDAL.Listar(idUsuario, true);
+			}
+			else
+			{
+				lista = SolicitacaoViagemDAL.Listar(idUsuario, false);
+			}
+			
 			retorno = new SolicitacaoViagemViewModel(lista);
 			retorno.Sucesso = true;
 			
@@ -51,8 +70,33 @@ public class SolicitacaoController {
 			
 			SolicitacaoViagemModel model = new SolicitacaoViagemModel(solicitacao);
 			
-			int id = SolicitacaoViagemDAL.Inserir(model);
-			
+			if (model.getId() >= 0) {
+				if (solicitacao.EnviarAprovacao) {
+					model.setStatus(EStatus.AGUARDANDO_APROVACAO_VIAGEM);
+				}
+				else if (solicitacao.Aprovado) {
+					model.setStatus(EStatus.EM_ABERTO_CONTAS);
+				}
+				else if (solicitacao.Reprovado) {
+					model.setStatus(EStatus.RECUSADO_VIAGEM);
+				}
+				else if (solicitacao.EnviarAprovacaoCustos) {
+					model.setStatus(EStatus.AGUARDANDO_APROVACAO_CONTAS);
+				}
+				else if (solicitacao.AprovadoCustos) {
+					model.setStatus(EStatus.FINALIZADO);
+				}
+				else if (solicitacao.ReprovadoCustos) {
+					model.setStatus(EStatus.RECUSADO_CONTAS);
+				}
+				
+				SolicitacaoViagemDAL.Alterar(model);
+			}
+			else
+			{
+				model.setStatus(EStatus.EM_ABERTO);				
+				SolicitacaoViagemDAL.Inserir(model);
+			}			
 			
 			retorno.Sucesso = true;
 			
@@ -62,7 +106,7 @@ public class SolicitacaoController {
 		}
 		
 		return retorno;
-	}
+	} 
 	
 	@POST
 	@Path("/remover")

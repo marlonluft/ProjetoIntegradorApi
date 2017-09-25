@@ -67,6 +67,14 @@ public class SolicitacaoViagemViewModel extends Retorno {
 	@XmlElement public ArrayList<SolicitacaoCustoViewModel> Custos;
 	@XmlElement public String Justificativa;
 	
+	/* Incica qual status está para ir */
+	@XmlElement public Boolean EnviarAprovacao;
+	@XmlElement public Boolean Aprovado;
+	@XmlElement public Boolean Reprovado;
+	@XmlElement public Boolean EnviarAprovacaoCustos;
+	@XmlElement public Boolean AprovadoCustos;
+	@XmlElement public Boolean ReprovadoCustos;
+	
 	@XmlElement List<SolicitacaoViagemViewModel> Lista;
 	
 }

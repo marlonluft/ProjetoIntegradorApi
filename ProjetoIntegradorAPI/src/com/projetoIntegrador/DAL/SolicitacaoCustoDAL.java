@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class SolicitacaoCustoDAL {
 			pst.setInt(2, model.getTipo().getIndex());
 			pst.setInt(3, model.getQuantidade());
 			pst.setFloat(4, model.getValorSolicitado());
-			pst.setFloat(5, model.getValorPrestado());
+			pst.setObject(5, model.getValorPrestado(), Types.INTEGER);
 			pst.executeUpdate();
 			return Funcoes.getId("CUSTOS");
 		} catch (Exception e) {
@@ -67,7 +68,7 @@ public class SolicitacaoCustoDAL {
 			pst.setInt(2, model.getTipo().getIndex());
 			pst.setInt(3, model.getQuantidade());
 			pst.setFloat(4, model.getValorSolicitado());
-			pst.setFloat(5, model.getValorPrestado());
+			pst.setObject(5, model.getValorPrestado(), Types.INTEGER);
 			pst.setInt(6, model.getId());
 	
 			return pst.executeUpdate() > 0;
@@ -118,7 +119,7 @@ public class SolicitacaoCustoDAL {
                       	 ECusto.getEnum(rs.getInt("TIPO")), 
                       	 rs.getInt("quantidade"), 
                       	 rs.getFloat("valor_solic"),
-                      	 rs.getFloat("valor_solic")));
+                      	 rs.getFloat("valor_prest")));
 			}
 			return pessoas;
 		} catch (Exception e) {

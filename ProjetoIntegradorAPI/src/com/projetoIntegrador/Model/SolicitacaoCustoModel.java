@@ -20,11 +20,11 @@ public class SolicitacaoCustoModel {
 		this.setValorPrestado(valor_prest);
 		this.setValorSolicitado(valor_solic);
 	}
-	public SolicitacaoCustoModel(SolicitacaoCustoViewModel model) {
+	public SolicitacaoCustoModel(SolicitacaoCustoViewModel model) throws Exception {
 		this.setId(model.Id);
 		this.setIdSolicitacao(model.IdSolicitacao);
 		this.setQuantidade(model.Quantidade);
-		this.setTipo(model.Tipo);
+		this.setTipo(ECusto.getEnum(model.TipoI));
 		this.setValorPrestado(model.ValorPrestado);
 		this.setValorSolicitado(model.ValorSolicitado);
 	}
