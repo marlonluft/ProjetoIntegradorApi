@@ -70,35 +70,49 @@ public class SolicitacaoController {
 			
 			SolicitacaoViagemModel model = new SolicitacaoViagemModel(solicitacao);
 			
-			if (model.getId() >= 0) {
-				if (solicitacao.EnviarAprovacao) {
-					model.setStatus(EStatus.AGUARDANDO_APROVACAO_VIAGEM);
-				}
-				else if (solicitacao.Aprovado) {
-					model.setStatus(EStatus.EM_ABERTO_CONTAS);
-				}
-				else if (solicitacao.Reprovado) {
-					model.setStatus(EStatus.RECUSADO_VIAGEM);
-				}
-				else if (solicitacao.EnviarAprovacaoCustos) {
-					model.setStatus(EStatus.AGUARDANDO_APROVACAO_CONTAS);
-				}
-				else if (solicitacao.AprovadoCustos) {
-					model.setStatus(EStatus.FINALIZADO);
-				}
-				else if (solicitacao.ReprovadoCustos) {
-					model.setStatus(EStatus.RECUSADO_CONTAS);
-				}
-				
-				SolicitacaoViagemDAL.Alterar(model);
+			if (model.getDataIda().getTime() > model.getDataVolta().getTime()) {
+				retorno.Mensagem = "Data de Ida é maior que a Data de Volta.";
 			}
 			else
-			{
-				model.setStatus(EStatus.EM_ABERTO);				
-				SolicitacaoViagemDAL.Inserir(model);
-			}			
+			{			
+				if (model.getId() >= 0) {
+					if (solicitacao.EnviarAprovacao) {
+						model.setStatus(EStatus.AGUARDANDO_APROVACAO_VIAGEM);
+					}
+					else if (solicitacao.Aprovado) {
+						model.setStatus(EStatus.EM_ABERTO_CONTAS);
+					}
+					else if (solicitacao.Reprovado) {
+						model.setStatus(EStatus.RECUSADO_VIAGEM);
+					}
+					else if (solicitacao.EnviarAprovacaoCustos) {
+						model.setStatus(EStatus.AGUARDANDO_APROVACAO_CONTAS);
+					}
+					else if (solicitacao.AprovadoCustos) {
+						model.setStatus(EStatus.FINALIZADO);
+					}
+					else if (solicitacao.ReprovadoCustos) {
+						model.setStatus(EStatus.RECUSADO_CONTAS);
+					}
+				
+					SolicitacaoViagemDAL.Alterar(model);
+				}
+				else
+				{
+					if (solicitacao.EnviarAprovacao) 
+					{
+						model.setStatus(EStatus.AGUARDANDO_APROVACAO_VIAGEM);
+					}
+					else
+					{
+						model.setStatus(EStatus.EM_ABERTO);	
+					}
+							
+					SolicitacaoViagemDAL.Inserir(model);
+				}			
 			
-			retorno.Sucesso = true;
+				retorno.Sucesso = true;			
+			}
 			
 		} catch (Exception e) 
 		{

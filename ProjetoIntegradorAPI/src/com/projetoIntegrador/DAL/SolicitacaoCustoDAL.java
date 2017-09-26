@@ -19,8 +19,7 @@ public class SolicitacaoCustoDAL {
 	
 	
 	
-	public static Integer Inserir(SolicitacaoCustoModel model) throws BDException {
-		Connection conexao = Conexao.getConexao();
+	public static Integer Inserir(SolicitacaoCustoModel model, Connection conexao) throws BDException {
 		try {
 			PreparedStatement pst = conexao.prepareStatement("INSERT INTO CUSTOS (idsolicitacao, tipo, quantidade, valor_solic, valor_prest)"
                                                             +"VALUES (?, ?, ?, ?, ?);");
@@ -33,8 +32,6 @@ public class SolicitacaoCustoDAL {
 			return Funcoes.getId("CUSTOS");
 		} catch (Exception e) {
 			throw new BDException(EErrosBD.INSERE_DADO, e.getMessage());
-		} finally {
-			Conexao.closeConexao();
 		}
 	}
 
@@ -60,8 +57,7 @@ public class SolicitacaoCustoDAL {
  		}
 	}
 
-	public static Boolean Alterar(SolicitacaoCustoModel model) throws BDException {
-		Connection conexao = Conexao.getConexao();
+	public static Boolean Alterar(SolicitacaoCustoModel model, Connection conexao) throws BDException {
 		try {
 			PreparedStatement pst = conexao.prepareStatement("UPDATE CUSTOS SET idsolicitacao = ?, tipo = ?, quantidade = ?, valor_solic = ?, valor_prest = ? WHERE ID = ?;");
 			pst.setInt(1, model.getIdSolicitacao());
@@ -74,8 +70,6 @@ public class SolicitacaoCustoDAL {
 			return pst.executeUpdate() > 0;
 		} catch (Exception e) {
 			throw new BDException(EErrosBD.ATUALIZA, e.getMessage());
-		} finally {
-			Conexao.closeConexao();
 		}
 	}
 
@@ -129,8 +123,7 @@ public class SolicitacaoCustoDAL {
 		}
 	}  
 	
-	public static List<SolicitacaoCustoModel> ListarPorSolicitacao(int idSolicitacao) throws BDException {
-		Connection conexao = Conexao.getConexao();
+	public static List<SolicitacaoCustoModel> ListarPorSolicitacao(int idSolicitacao, Connection conexao) throws BDException {
 		try {
 			List<SolicitacaoCustoModel> pessoas = new ArrayList<SolicitacaoCustoModel>();
 
@@ -148,8 +141,6 @@ public class SolicitacaoCustoDAL {
 			return pessoas;
 		} catch (Exception e) {
 			throw new BDException(EErrosBD.CONSULTA, e.getMessage());
-		} finally {
-			Conexao.closeConexao();
 		}
 	}  
 	

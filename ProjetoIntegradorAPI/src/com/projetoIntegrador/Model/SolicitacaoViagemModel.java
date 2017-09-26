@@ -55,6 +55,7 @@ public class SolicitacaoViagemModel {
 		this.setStatus(EStatus.getEnum(model.Status));
 		this.setUfDestino(model.UfDestino);
 		this.setUfOrigem(model.UfOrigem);
+		this.setJustificativa(model.Justificativa);
 		
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
 		

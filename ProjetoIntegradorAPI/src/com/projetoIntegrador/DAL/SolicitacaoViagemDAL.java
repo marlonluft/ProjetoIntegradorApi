@@ -41,7 +41,7 @@ public class SolicitacaoViagemDAL {
 			
 			for (int i = 0; i < model.getCustos().size(); i++) {
 				model.getCustos().get(i).setIdSolicitacao(idSolicitacao);
-				SolicitacaoCustoDAL.Inserir(model.getCustos().get(i));
+				SolicitacaoCustoDAL.Inserir(model.getCustos().get(i), conexao);
 			}
 			
 			return idSolicitacao;
@@ -71,7 +71,7 @@ public class SolicitacaoViagemDAL {
 			                                       rs.getString("observacao"), 
 			                                       EStatus.getEnum(rs.getInt("status")),
 			                                       rs.getString("justificativa"),
-                                                   (ArrayList<SolicitacaoCustoModel>) SolicitacaoCustoDAL.ListarPorSolicitacao(rs.getInt("ID"))); 			
+                                                   (ArrayList<SolicitacaoCustoModel>) SolicitacaoCustoDAL.ListarPorSolicitacao(rs.getInt("ID"), conexao)); 			
 			}
 			return null;
  		} catch (Exception e) {
@@ -83,21 +83,22 @@ public class SolicitacaoViagemDAL {
 
 	public static Boolean Alterar(SolicitacaoViagemModel model) throws BDException {		
 		try 
-		{			
+		{	
+			Connection conexao = Conexao.getConexao();
+			
 			for (int i = 0; i < model.getCustos().size(); i++) {
 				
 				if (model.getCustos().get(i).getId() < 0) 
 				{
 					model.getCustos().get(i).setIdSolicitacao(model.getId());
-					SolicitacaoCustoDAL.Inserir(model.getCustos().get(i));
+					SolicitacaoCustoDAL.Inserir(model.getCustos().get(i), conexao);
 				}				
 				else
 				{
-					SolicitacaoCustoDAL.Alterar(model.getCustos().get(i));
+					SolicitacaoCustoDAL.Alterar(model.getCustos().get(i), conexao);
 				}
 			}
-			
-			Connection conexao = Conexao.getConexao();
+						
 			PreparedStatement pst = conexao.prepareStatement("UPDATE SOLICITACAO SET idusuario = ?, cidade_origem = ?, uf_origem = ?, cidade_destino = ?, uf_destino = ?, data_ida = ?, data_volta = ?, motivo = ?, observacao = ? , status = ?, justificativa = ? WHERE ID = ?;");
 			pst.setInt(1, model.getIdUsuario());
 			pst.setString(2, model.getCidadeOrigem());
@@ -146,11 +147,11 @@ public class SolicitacaoViagemDAL {
 			String sql = "";
 			
 			if (gestor) {
-				sql = "SELECT s.* FROM SOLICITACAO AS s LEFT JOIN USUARIO AS u ON s.idusuario = u.id LEFT JOIN SETOR AS se ON u.cod_setor = se.id WHERE se.idusuario = ?;";
+				sql = "SELECT s.* FROM SOLICITACAO AS s LEFT JOIN USUARIO AS u ON s.idusuario = u.id LEFT JOIN SETOR AS se ON u.cod_setor = se.id WHERE status in (1,4) AND se.idusuario = ?;";
 			}
 			else
 			{
-				sql = "SELECT * FROM SOLICITACAO WHERE idUsuario = ?;";
+				sql = "SELECT * FROM SOLICITACAO WHERE status in (0,1,2,3,4,5,6) AND idUsuario = ?;";
 			}
 			
 			PreparedStatement pst = conexao.prepareStatement(sql);
@@ -170,8 +171,13 @@ public class SolicitacaoViagemDAL {
                         rs.getString("observacao"), 
                         EStatus.getEnum(rs.getInt("status")),
                         rs.getString("justificativa"),
-                        (ArrayList<SolicitacaoCustoModel>) SolicitacaoCustoDAL.ListarPorSolicitacao(rs.getInt("ID"))));
+                        null));
 			}
+			
+			for (int i = 0; i < pessoas.size(); i++) {
+				pessoas.get(i).setCustos((ArrayList<SolicitacaoCustoModel>) SolicitacaoCustoDAL.ListarPorSolicitacao(pessoas.get(i).getId(), conexao));
+			}
+			
 			return pessoas;
 		} catch (Exception e) {
 			throw new BDException(EErrosBD.CONSULTA, e.getMessage());

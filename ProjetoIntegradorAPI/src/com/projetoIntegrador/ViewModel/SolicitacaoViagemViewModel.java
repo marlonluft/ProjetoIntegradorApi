@@ -38,7 +38,8 @@ public class SolicitacaoViagemViewModel extends Retorno {
 		this.Observacao = model.getObservacao();
 		this.Status = model.getStatus().getIndex();
 		this.UfDestino = model.getUfDestino();
-		this.UfOrigem = model.getUfOrigem();		
+		this.UfOrigem = model.getUfOrigem();	
+		this.Justificativa = model.getJustificativa();
 		
 		this.Custos = new ArrayList<SolicitacaoCustoViewModel>();
 		
