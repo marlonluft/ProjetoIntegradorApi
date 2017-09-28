@@ -36,6 +36,7 @@ public class UsuarioController
 				retorno.Sucesso = true;
 				retorno.Perfil = usuario.getPerfil();
 				retorno.Id = usuario.getId();
+				retorno.Nome = usuario.getNome();
 			}
 			else
 			{
