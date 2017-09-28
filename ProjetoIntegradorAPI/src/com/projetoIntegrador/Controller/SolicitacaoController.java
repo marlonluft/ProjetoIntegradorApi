@@ -1,5 +1,6 @@
 package com.projetoIntegrador.Controller;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -70,7 +71,11 @@ public class SolicitacaoController {
 			
 			SolicitacaoViagemModel model = new SolicitacaoViagemModel(solicitacao);
 			
-			if (model.getDataIda().getTime() > model.getDataVolta().getTime()) {
+			if (model.getDataIda().getTime() < new Date().getTime())
+			{
+				retorno.Mensagem = "Data de Ida é menor que a Data de Hoje.";
+			}
+			else if (model.getDataIda().getTime() > model.getDataVolta().getTime()) {
 				retorno.Mensagem = "Data de Ida é maior que a Data de Volta.";
 			}
 			else
