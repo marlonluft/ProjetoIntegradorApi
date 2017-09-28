@@ -1,5 +1,6 @@
 package com.projetoIntegrador.Controller;
 
+import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
 
@@ -10,10 +11,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.annotation.XmlElement;
 
+import com.projetoIntegrador.Conexao.Conexao;
+import com.projetoIntegrador.DAL.SolicitacaoCustoDAL;
 import com.projetoIntegrador.DAL.SolicitacaoViagemDAL;
 import com.projetoIntegrador.DAL.UsuarioDAL;
 import com.projetoIntegrador.Enumerador.EPerfil;
 import com.projetoIntegrador.Enumerador.EStatus;
+import com.projetoIntegrador.Exceptions.BDException;
 import com.projetoIntegrador.Model.SolicitacaoViagemModel;
 import com.projetoIntegrador.Model.UsuarioModel;
 import com.projetoIntegrador.ViewModel.Retorno;
@@ -100,6 +104,7 @@ public class SolicitacaoController {
 						model.setStatus(EStatus.RECUSADO_CONTAS);
 					}
 				
+					VerificarCustosRemovidos(model);
 					SolicitacaoViagemDAL.Alterar(model);
 				}
 				else
@@ -112,7 +117,8 @@ public class SolicitacaoController {
 					{
 						model.setStatus(EStatus.EM_ABERTO);	
 					}
-							
+					
+					VerificarCustosRemovidos(model);
 					SolicitacaoViagemDAL.Inserir(model);
 				}			
 			
@@ -126,6 +132,39 @@ public class SolicitacaoController {
 		
 		return retorno;
 	} 
+	
+	private void VerificarCustosRemovidos(SolicitacaoViagemModel model) throws BDException
+	{	
+		try
+		{			
+			Connection conexao = Conexao.getConexao();
+			
+			List<Integer> custosIds =  SolicitacaoCustoDAL.ListarIds(model.getId());
+		
+			// Loop ids custos salvos no banco de dados
+			for (int i = 0; i < custosIds.size(); i++) 
+			{			
+				Boolean encontrou = false;
+			
+				// Loop custo vindos da tela
+				for (int j = 0; j < model.getCustos().size(); j++) 
+				{				
+					if (custosIds.get(i) == model.getCustos().get(j).getId()) 
+					{
+						encontrou = true;
+					}				
+				}
+			
+				if (!encontrou) {
+					// Se não encontrar o id na listagem, remove do banco
+					SolicitacaoCustoDAL.Deleter(custosIds.get(i), conexao);
+				}
+			}
+		}
+		finally {
+			Conexao.closeConexao();
+		}
+	}
 	
 	@POST
 	@Path("/remover")

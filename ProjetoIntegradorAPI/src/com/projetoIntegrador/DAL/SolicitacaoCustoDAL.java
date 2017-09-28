@@ -73,16 +73,14 @@ public class SolicitacaoCustoDAL {
 		}
 	}
 
-	public static Boolean Deleter(Integer Id) throws BDException {
-		Connection conexao = Conexao.getConexao();
+	public static Boolean Deleter(Integer Id, Connection conexao) throws BDException {
+		
 		try {
 			PreparedStatement pst = conexao.prepareStatement("DELETE FROM CUSTOS WHERE ID = ?;");
 			pst.setInt(1, Id);
 			return pst.executeUpdate() > 0;
 		} catch (Exception e) {
 			throw new BDException(EErrosBD.EXCLUI, e.getMessage());
-		} finally {
-			Conexao.closeConexao();
 		}
 	}
 	
@@ -142,6 +140,27 @@ public class SolicitacaoCustoDAL {
 		} catch (Exception e) {
 			throw new BDException(EErrosBD.CONSULTA, e.getMessage());
 		}
+	}
+
+	public static List<Integer> ListarIds(int idSolicitacao) throws BDException {
+		try {
+			Connection conexao = Conexao.getConexao();
+			List<Integer> pessoas = new ArrayList<Integer>();
+
+			PreparedStatement pst = conexao.prepareStatement("SELECT Id FROM CUSTOS WHERE idsolicitacao = ?;");
+			pst.setInt(1, idSolicitacao);
+			ResultSet rs = pst.executeQuery();
+			while (rs.next()) {
+				pessoas.add(rs.getInt("ID"));
+			}
+			
+			return pessoas;
+		} catch (Exception e) {
+			throw new BDException(EErrosBD.CONSULTA, e.getMessage());
+		
+	} finally {
+		Conexao.closeConexao();
+	}
 	}  
 	
 	
