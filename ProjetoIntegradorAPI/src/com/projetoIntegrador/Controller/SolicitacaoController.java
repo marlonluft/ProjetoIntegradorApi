@@ -1,7 +1,6 @@
 package com.projetoIntegrador.Controller;
 
 import java.sql.Connection;
-import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -74,12 +73,8 @@ public class SolicitacaoController {
 		try {
 			
 			SolicitacaoViagemModel model = new SolicitacaoViagemModel(solicitacao);
-			
-			if (model.getStatus() == EStatus.EM_ABERTO && model.getDataIda().getTime() < new Date().getTime())
-			{
-				retorno.Mensagem = "Data de Ida é menor que a Data de Hoje.";
-			}
-			else if (model.getStatus() == EStatus.EM_ABERTO && model.getDataIda().getTime() > model.getDataVolta().getTime()) {
+									
+			if (model.getStatus() == EStatus.EM_ABERTO && model.getDataIda().getTime() > model.getDataVolta().getTime()) {
 				retorno.Mensagem = "Data de Ida é maior que a Data de Volta.";
 			}
 			else
