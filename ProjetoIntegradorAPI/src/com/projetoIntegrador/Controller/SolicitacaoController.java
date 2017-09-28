@@ -71,11 +71,11 @@ public class SolicitacaoController {
 			
 			SolicitacaoViagemModel model = new SolicitacaoViagemModel(solicitacao);
 			
-			if (model.getDataIda().getTime() < new Date().getTime())
+			if (model.getStatus() == EStatus.EM_ABERTO && model.getDataIda().getTime() < new Date().getTime())
 			{
 				retorno.Mensagem = "Data de Ida é menor que a Data de Hoje.";
 			}
-			else if (model.getDataIda().getTime() > model.getDataVolta().getTime()) {
+			else if (model.getStatus() == EStatus.EM_ABERTO && model.getDataIda().getTime() > model.getDataVolta().getTime()) {
 				retorno.Mensagem = "Data de Ida é maior que a Data de Volta.";
 			}
 			else
