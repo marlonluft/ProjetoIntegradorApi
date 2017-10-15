@@ -9,6 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.projetoIntegrador.DAL.SetorDAL;
+import com.projetoIntegrador.DAL.SolicitacaoViagemDAL;
 import com.projetoIntegrador.DAL.UsuarioDAL;
 import com.projetoIntegrador.Enumerador.EPerfil;
 import com.projetoIntegrador.Exceptions.BDException;
@@ -212,6 +213,10 @@ public class UsuarioController
 				}
 				else
 				{
+					// Remove as solicitações criadas pelo usuário
+					SolicitacaoViagemDAL.DeleterPorusuario(model.Id);
+					
+					// Remove o usuário.
 					retorno.Sucesso = UsuarioDAL.Deleter(model.Id);					
 				}
 			}

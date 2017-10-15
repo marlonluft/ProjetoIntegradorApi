@@ -123,12 +123,29 @@ public class SolicitacaoViagemDAL {
 	}
 
 	public static Boolean Deleter(Integer Id) throws BDException {		
-		try {			
-				SolicitacaoCustoDAL.DeleterPorSolicitacao(Id);
-				
+		try {	
 				Connection conexao = Conexao.getConexao();
-				PreparedStatement pst = conexao.prepareStatement("DELETE FROM SOLICITACAO WHERE ID = ?;");
+				SolicitacaoCustoDAL.DeleterPorSolicitacao(Id, conexao);
+								
+				PreparedStatement pst = conexao.prepareStatement("DELETE FROM SOLICITACAO WHERE id = ?;");
 				pst.setInt(1, Id);
+				
+				return pst.executeUpdate() > 0;
+		} catch (Exception e) {
+			throw new BDException(EErrosBD.EXCLUI, e.getMessage());
+		} finally {
+			Conexao.closeConexao();
+		}
+	}
+	
+	public static Boolean DeleterPorusuario(Integer IdUsuario) throws BDException {		
+		try {	
+				Connection conexao = Conexao.getConexao();
+				SolicitacaoCustoDAL.DeleterPorusuario(IdUsuario, conexao);
+								
+				PreparedStatement pst = conexao.prepareStatement("DELETE FROM SOLICITACAO WHERE idusuario = ?;");
+				pst.setInt(1, IdUsuario);
+				
 				return pst.executeUpdate() > 0;
 		} catch (Exception e) {
 			throw new BDException(EErrosBD.EXCLUI, e.getMessage());
