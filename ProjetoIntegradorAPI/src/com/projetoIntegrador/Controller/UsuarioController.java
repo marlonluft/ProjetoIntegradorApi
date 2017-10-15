@@ -205,7 +205,7 @@ public class UsuarioController
 			{
 				if (usuario.getPerfil() == EPerfil.GESTOR && usuario.getCodSetor() >= 0)
 				{
-					retorno.Mensagem = "Este gestor não pode ser removido pois está vinculado a um setor.";
+					retorno.Mensagem = "Um ou mais setores estão vinculados a este gestor, remova o vinculo na tela de setores para continuar.";
 				}
 				else if (usuario.getPerfil() == EPerfil.ADMINISTRADOR && UsuarioDAL.GetQuantidadeAdministradores() == 1)
 				{
