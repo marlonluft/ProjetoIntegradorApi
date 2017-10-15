@@ -91,6 +91,11 @@ public class SolicitacaoController {
 					}
 					else if (solicitacao.EnviarAprovacaoCustos) {
 						model.setStatus(EStatus.AGUARDANDO_APROVACAO_CONTAS);
+						
+						for (int i = 0; i < model.getCustos().size(); i++) {
+							Float valor = model.getCustos().get(i).getValorPrestado();
+							model.getCustos().get(i).setValorPrestado(valor == null ? 0 : valor);
+						}
 					}
 					else if (solicitacao.AprovadoCustos) {
 						model.setStatus(EStatus.FINALIZADO);

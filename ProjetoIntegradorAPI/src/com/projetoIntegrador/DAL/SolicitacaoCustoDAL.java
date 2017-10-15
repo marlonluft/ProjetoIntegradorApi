@@ -134,7 +134,7 @@ public class SolicitacaoCustoDAL {
                       	 ECusto.getEnum(rs.getInt("TIPO")), 
                       	 rs.getInt("quantidade"), 
                       	 rs.getFloat("valor_solic"),
-                      	 rs.getFloat("valor_solic")));
+                      	 rs.getFloat("valor_prest")));
 			}
 			return pessoas;
 		} catch (Exception e) {
