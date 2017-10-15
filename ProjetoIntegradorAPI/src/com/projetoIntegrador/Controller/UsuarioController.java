@@ -103,7 +103,7 @@ public class UsuarioController
 		{
 			UsuarioModel usuarioModel = new UsuarioModel(model);
 			
-			if (!SetorDAL.Existe(usuarioModel.getCodSetor()))
+			if (usuarioModel.getPerfil() == EPerfil.COLABORADOR && !SetorDAL.Existe(usuarioModel.getCodSetor()))
 			{
 				retorno.Mensagem = "O setor selecionado não existe";
 			}
