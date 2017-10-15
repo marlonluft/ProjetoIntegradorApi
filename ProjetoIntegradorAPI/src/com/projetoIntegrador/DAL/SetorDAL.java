@@ -80,7 +80,29 @@ public class SetorDAL {
 		}
 	}
 	
-
+	public static Boolean ContemGestor(Integer IdGestor) throws BDException
+	{
+		Connection conexao = Conexao.getConexao();
+		try {
+			PreparedStatement pst = conexao.prepareStatement("SELECT nome FROM SETOR WHERE idusuario = ?;");
+			pst.setInt(1, IdGestor);
+			ResultSet rs = pst.executeQuery();
+			if (rs.first()) 
+			{
+				return true;
+			}		
+			
+ 		} catch (Exception e) 
+		{
+ 			throw new BDException(EErrosBD.CONSULTA, e.getMessage());
+ 		} 
+		finally 
+		{
+ 			Conexao.closeConexao();
+ 		}
+		
+		return false;
+	}
 	
 	public static List<SetorModel> Listar() throws BDException {
 		Connection conexao = Conexao.getConexao();

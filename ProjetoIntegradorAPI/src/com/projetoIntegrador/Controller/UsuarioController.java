@@ -203,7 +203,7 @@ public class UsuarioController
 			
 			if (usuario != null) 
 			{
-				if (usuario.getPerfil() == EPerfil.GESTOR && usuario.getCodSetor() >= 0)
+				if (usuario.getPerfil() == EPerfil.GESTOR && SetorDAL.ContemGestor(usuario.getId()))
 				{
 					retorno.Mensagem = "Um ou mais setores estão vinculados a este gestor, remova o vinculo na tela de setores para continuar.";
 				}
