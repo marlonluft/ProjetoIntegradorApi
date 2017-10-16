@@ -141,7 +141,11 @@ public class UsuarioController
 						}
 						else if (!usuario.getCpf().equals(usuarioModel.getCpf()) && UsuarioDAL.ExisteCPF(usuarioModel.getCpf()))
 						{
-							retorno.Mensagem = "CPF já vinculado a outro usuário.";							
+							retorno.Mensagem = "CPF já vinculado a outro usuário.";
+						}
+						else if (usuario.getPerfil() == EPerfil.GESTOR && usuarioModel.getPerfil() != EPerfil.GESTOR && SetorDAL.ContemGestor(usuarioModel.getId()))
+						{
+							retorno.Mensagem = "Há setores vinculados a este gestor, favor remover o vinculo para continuar.";
 						}
 						else
 						{
@@ -149,7 +153,7 @@ public class UsuarioController
 							{
 								// Remove as solicitações criadas pelo usuário
 								SolicitacaoViagemDAL.DeleterPorusuario(usuario.getId());
-							}
+							}														
 							
 							retorno.Sucesso = UsuarioDAL.Alterar(usuarioModel);
 						}
