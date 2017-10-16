@@ -145,6 +145,12 @@ public class UsuarioController
 						}
 						else
 						{
+							if (usuario.getPerfil() == EPerfil.COLABORADOR && usuarioModel.getPerfil() != EPerfil.COLABORADOR)
+							{
+								// Remove as solicitações criadas pelo usuário
+								SolicitacaoViagemDAL.DeleterPorusuario(usuario.getId());
+							}
+							
 							retorno.Sucesso = UsuarioDAL.Alterar(usuarioModel);
 						}
 					}
