@@ -27,7 +27,7 @@ public class SolicitacaoCustoDAL {
 			pst.setInt(2, model.getTipo().getIndex());
 			pst.setInt(3, model.getQuantidade());
 			pst.setFloat(4, model.getValorSolicitado());
-			pst.setObject(5, model.getValorPrestado(), Types.INTEGER);
+			pst.setObject(5, model.getValorPrestado(), Types.FLOAT);
 			pst.executeUpdate();
 			return Funcoes.getId("CUSTOS");
 		} catch (Exception e) {
@@ -64,7 +64,7 @@ public class SolicitacaoCustoDAL {
 			pst.setInt(2, model.getTipo().getIndex());
 			pst.setInt(3, model.getQuantidade());
 			pst.setFloat(4, model.getValorSolicitado());
-			pst.setObject(5, model.getValorPrestado(), Types.INTEGER);
+			pst.setObject(5, model.getValorPrestado(), Types.FLOAT);
 			pst.setInt(6, model.getId());
 	
 			return pst.executeUpdate() > 0;
