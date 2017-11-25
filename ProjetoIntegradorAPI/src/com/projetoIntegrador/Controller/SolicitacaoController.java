@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.xml.bind.annotation.XmlElement;
 
 import com.projetoIntegrador.Conexao.Conexao;
+import com.projetoIntegrador.DAL.AcessoDAL;
 import com.projetoIntegrador.DAL.SolicitacaoCustoDAL;
 import com.projetoIntegrador.DAL.SolicitacaoViagemDAL;
 import com.projetoIntegrador.DAL.UsuarioDAL;
@@ -29,36 +30,32 @@ public class SolicitacaoController {
 	@Path("/listar")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public SolicitacaoViagemViewModel Listar(@XmlElement int idUsuario)
-	{		
-		SolicitacaoViagemViewModel retorno;
-		
+	public SolicitacaoViagemViewModel Listar(@XmlElement int idAcesso, @XmlElement int usuarioId) {
+		SolicitacaoViagemViewModel retorno = new SolicitacaoViagemViewModel();
+
 		try {
-			List<SolicitacaoViagemModel> lista = null;
-			
-			UsuarioModel usuario = UsuarioDAL.Buscar(idUsuario);
-			if (usuario == null)
-			{
-				throw new Exception("Usuário logado não encontrado.");
+			if (AcessoDAL.AcessoValido(idAcesso, usuarioId)) {
+				retorno.AcessoValido = true;
+				List<SolicitacaoViagemModel> lista = null;
+
+				UsuarioModel usuario = UsuarioDAL.Buscar(usuarioId);
+				if (usuario == null) {
+					throw new Exception("Usuário logado não encontrado.");
+				} else if (usuario.getPerfil() == EPerfil.GESTOR) {
+					lista = SolicitacaoViagemDAL.Listar(usuarioId, true);
+				} else {
+					lista = SolicitacaoViagemDAL.Listar(usuarioId, false);
+				}
+
+				retorno = new SolicitacaoViagemViewModel(lista);
+				retorno.Sucesso = true;
 			}
-			else if (usuario.getPerfil() == EPerfil.GESTOR)
-			{
-				lista = SolicitacaoViagemDAL.Listar(idUsuario, true);
-			}
-			else
-			{
-				lista = SolicitacaoViagemDAL.Listar(idUsuario, false);
-			}
-			
-			retorno = new SolicitacaoViagemViewModel(lista);
-			retorno.Sucesso = true;
-			
-		} catch (Exception e) 
-		{
+
+		} catch (Exception e) {
 			retorno = new SolicitacaoViagemViewModel();
 			retorno.Mensagem = "Falha ao realizar a listagem de solicitações de viagem.";
 		}
-		
+
 		return retorno;
 	}
 
@@ -66,130 +63,109 @@ public class SolicitacaoController {
 	@Path("/salvar")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Retorno Salvar(SolicitacaoViagemViewModel solicitacao)
-	{		
+	public Retorno Salvar(SolicitacaoViagemViewModel solicitacao) {
 		Retorno retorno = new Retorno();
-		
+
 		try {
-			
-			SolicitacaoViagemModel model = new SolicitacaoViagemModel(solicitacao);
-									
-			if (model.getStatus() == EStatus.EM_ABERTO && model.getDataIda().getTime() > model.getDataVolta().getTime()) {
-				retorno.Mensagem = "Data de Ida é maior que a Data de Volta.";
-			}
-			else
-			{			
-				if (model.getId() >= 0) {
-					if (solicitacao.EnviarAprovacao) {
-						model.setStatus(EStatus.AGUARDANDO_APROVACAO_VIAGEM);
-					}
-					else if (solicitacao.Aprovado) {
-						model.setStatus(EStatus.EM_ABERTO_CONTAS);
-					}
-					else if (solicitacao.Reprovado) {
-						model.setStatus(EStatus.RECUSADO_VIAGEM);
-					}
-					else if (solicitacao.EnviarAprovacaoCustos) {
-						model.setStatus(EStatus.AGUARDANDO_APROVACAO_CONTAS);
-						
-						for (int i = 0; i < model.getCustos().size(); i++) {
-							Float valor = model.getCustos().get(i).getValorPrestado();
-							model.getCustos().get(i).setValorPrestado(valor == null ? 0 : valor);
+			if (AcessoDAL.AcessoValido(solicitacao.IdAcesso, solicitacao.UsuarioId)) {
+				retorno.AcessoValido = true;
+				SolicitacaoViagemModel model = new SolicitacaoViagemModel(solicitacao);
+
+				if (model.getStatus() == EStatus.EM_ABERTO
+						&& model.getDataIda().getTime() > model.getDataVolta().getTime()) {
+					retorno.Mensagem = "Data de Ida é maior que a Data de Volta.";
+				} else {
+					if (model.getId() >= 0) {
+						if (solicitacao.EnviarAprovacao) {
+							model.setStatus(EStatus.AGUARDANDO_APROVACAO_VIAGEM);
+						} else if (solicitacao.Aprovado) {
+							model.setStatus(EStatus.EM_ABERTO_CONTAS);
+						} else if (solicitacao.Reprovado) {
+							model.setStatus(EStatus.RECUSADO_VIAGEM);
+						} else if (solicitacao.EnviarAprovacaoCustos) {
+							model.setStatus(EStatus.AGUARDANDO_APROVACAO_CONTAS);
+
+							for (int i = 0; i < model.getCustos().size(); i++) {
+								Float valor = model.getCustos().get(i).getValorPrestado();
+								model.getCustos().get(i).setValorPrestado(valor == null ? 0 : valor);
+							}
+						} else if (solicitacao.AprovadoCustos) {
+							model.setStatus(EStatus.FINALIZADO);
+						} else if (solicitacao.ReprovadoCustos) {
+							model.setStatus(EStatus.RECUSADO_CONTAS);
 						}
+
+						VerificarCustosRemovidos(model);
+						SolicitacaoViagemDAL.Alterar(model);
+					} else {
+						if (solicitacao.EnviarAprovacao) {
+							model.setStatus(EStatus.AGUARDANDO_APROVACAO_VIAGEM);
+						} else {
+							model.setStatus(EStatus.EM_ABERTO);
+						}
+
+						VerificarCustosRemovidos(model);
+						SolicitacaoViagemDAL.Inserir(model);
 					}
-					else if (solicitacao.AprovadoCustos) {
-						model.setStatus(EStatus.FINALIZADO);
-					}
-					else if (solicitacao.ReprovadoCustos) {
-						model.setStatus(EStatus.RECUSADO_CONTAS);
-					}
-				
-					VerificarCustosRemovidos(model);
-					SolicitacaoViagemDAL.Alterar(model);
+
+					retorno.Sucesso = true;
 				}
-				else
-				{
-					if (solicitacao.EnviarAprovacao) 
-					{
-						model.setStatus(EStatus.AGUARDANDO_APROVACAO_VIAGEM);
-					}
-					else
-					{
-						model.setStatus(EStatus.EM_ABERTO);	
-					}
-					
-					VerificarCustosRemovidos(model);
-					SolicitacaoViagemDAL.Inserir(model);
-				}			
-			
-				retorno.Sucesso = true;			
 			}
-			
-		} catch (Exception e) 
-		{
+		} catch (Exception e) {
 			retorno.Mensagem = "Falha ao realizar ao salvar a solicitação de viagem.";
 		}
-		
+
 		return retorno;
-	} 
-	
-	private void VerificarCustosRemovidos(SolicitacaoViagemModel model) throws BDException
-	{	
-		try
-		{			
+	}
+
+	private void VerificarCustosRemovidos(SolicitacaoViagemModel model) throws BDException {
+		try {
 			Connection conexao = Conexao.getConexao();
-			
-			List<Integer> custosIds =  SolicitacaoCustoDAL.ListarIds(model.getId());
-		
+
+			List<Integer> custosIds = SolicitacaoCustoDAL.ListarIds(model.getId());
+
 			// Loop ids custos salvos no banco de dados
-			for (int i = 0; i < custosIds.size(); i++) 
-			{			
+			for (int i = 0; i < custosIds.size(); i++) {
 				Boolean encontrou = false;
-			
+
 				// Loop custo vindos da tela
-				for (int j = 0; j < model.getCustos().size(); j++) 
-				{				
-					if (custosIds.get(i) == model.getCustos().get(j).getId()) 
-					{
+				for (int j = 0; j < model.getCustos().size(); j++) {
+					if (custosIds.get(i) == model.getCustos().get(j).getId()) {
 						encontrou = true;
-					}				
+					}
 				}
-			
+
 				if (!encontrou) {
 					// Se não encontrar o id na listagem, remove do banco
 					SolicitacaoCustoDAL.Deleter(custosIds.get(i), conexao);
 				}
 			}
-		}
-		finally {
+		} finally {
 			Conexao.closeConexao();
 		}
 	}
-	
+
 	@POST
 	@Path("/remover")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Retorno Remover(String id)
-	{		
+	public Retorno Remover(@XmlElement String id, @XmlElement int idAcesso, @XmlElement int usuarioId) {
 		Retorno retorno = new Retorno();
-		
+
 		try {
-			if (SolicitacaoViagemDAL.Deleter(Integer.parseInt(id)))
-			{
-				retorno.Sucesso = true;
+			if (AcessoDAL.AcessoValido(idAcesso, usuarioId)) {
+				retorno.AcessoValido = true;
+				if (SolicitacaoViagemDAL.Deleter(Integer.parseInt(id))) {
+					retorno.Sucesso = true;
+				} else {
+					retorno.Mensagem = "A solicitação de viagem a ser removida não foi encontrada.";
+				}
 			}
-			else
-			{
-				retorno.Mensagem = "A solicitação de viagem a ser removida não foi encontrada.";
-			}			
-			
-		} catch (Exception e) 
-		{
+		} catch (Exception e) {
 			retorno.Mensagem = "Falha ao realizar a removção de solicitação de viagem.";
 		}
-		
+
 		return retorno;
 	}
-	
+
 }

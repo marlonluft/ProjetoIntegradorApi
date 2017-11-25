@@ -3,7 +3,7 @@ package com.projetoIntegrador.Model;
 import com.projetoIntegrador.Enumerador.ECusto;
 import com.projetoIntegrador.ViewModel.SolicitacaoCustoViewModel;
 
-public class SolicitacaoCustoModel {
+public class SolicitacaoCustoModel extends AcessoModel {
 
 	private int id;
 	private int idSolicitacao;

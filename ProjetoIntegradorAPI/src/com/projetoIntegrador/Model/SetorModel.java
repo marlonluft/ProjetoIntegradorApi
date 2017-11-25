@@ -2,7 +2,7 @@ package com.projetoIntegrador.Model;
 
 import com.projetoIntegrador.ViewModel.SetorViewModel;
 
-public class SetorModel {
+public class SetorModel extends AcessoModel {
 	
 	public SetorModel(){}
 	

@@ -8,264 +8,227 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.projetoIntegrador.DAL.AcessoDAL;
 import com.projetoIntegrador.DAL.SetorDAL;
 import com.projetoIntegrador.DAL.SolicitacaoViagemDAL;
 import com.projetoIntegrador.DAL.UsuarioDAL;
 import com.projetoIntegrador.Enumerador.EPerfil;
 import com.projetoIntegrador.Exceptions.BDException;
+import com.projetoIntegrador.Model.AcessoModel;
 import com.projetoIntegrador.Model.UsuarioModel;
 import com.projetoIntegrador.ViewModel.LoginViewModel;
 import com.projetoIntegrador.ViewModel.Retorno;
 import com.projetoIntegrador.ViewModel.UsuarioViewModel;
 
 @Path("/usuario")
-public class UsuarioController 
-{	
+public class UsuarioController {
 	@POST
 	@Path("/logar")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public LoginViewModel Logar(LoginViewModel model) 
-	{
+	public LoginViewModel Logar(LoginViewModel model) {
 		LoginViewModel retorno = new LoginViewModel();
 
 		try {
 			UsuarioModel usuario = UsuarioDAL.VerificarLogin(model.CPF, model.Senha);
-			
-			if (usuario != null) 
-			{
+
+			if (usuario != null) {
 				retorno.Sucesso = true;
 				retorno.Perfil = usuario.getPerfil();
 				retorno.Id = usuario.getId();
 				retorno.Nome = usuario.getNome();
-			}
-			else
-			{
+				retorno.AcessoValido = true;
+				retorno.AcessoId = AcessoDAL.Inserir(usuario.getId());
+			} else {
 				retorno.Mensagem = retorno.Sucesso ? "" : "Usuário e/ou senha inválido, tente novamente.";
 			}
-		} 
-		catch (Exception e) 
-		{
+		} catch (Exception e) {
 			retorno.Mensagem = "Erro ao realizar o logn, tente novamente. Erro: " + e.getMessage();
 		}
 
 		return retorno;
 	}
-	
+
 	@POST
 	@Path("/listar")
 	@Produces(MediaType.APPLICATION_JSON)
-	public UsuarioViewModel Listar()
-	{		
-		UsuarioViewModel retorno;
-		
+	public UsuarioViewModel Listar(AcessoModel acesso) {
+		UsuarioViewModel retorno = new UsuarioViewModel();
+
 		try {
-			List<UsuarioModel> lista = UsuarioDAL.Listar();
-			retorno = new UsuarioViewModel(lista);
-			retorno.Sucesso = true;
-			
-		} catch (BDException e) 
-		{
+			if (AcessoDAL.AcessoValido(acesso.IdAcesso, acesso.UsuarioId)) {
+				retorno.AcessoValido = true;
+				List<UsuarioModel> lista = UsuarioDAL.Listar();
+				retorno = new UsuarioViewModel(lista);
+				retorno.Sucesso = true;
+			}
+		} catch (BDException e) {
 			retorno = new UsuarioViewModel();
 			retorno.Mensagem = "Falha ao realizar a listagem de usuários.";
 		}
-		
+
 		return retorno;
 	}
-	
+
 	@POST
 	@Path("/consultar")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public UsuarioViewModel Consultar(UsuarioViewModel model)
-	{
-		UsuarioModel usuario;
-		
-		try 
-		{
-			usuario = UsuarioDAL.Buscar(model.Id);
-			return new UsuarioViewModel(usuario);
-		} 
-		catch (BDException e) 
-		{
+	public UsuarioViewModel Consultar(UsuarioViewModel model) {
+		UsuarioViewModel retorno = new UsuarioViewModel();
+
+		try {
+			if (AcessoDAL.AcessoValido(model.IdAcesso, model.UsuarioId)) {
+				UsuarioModel usuario = UsuarioDAL.Buscar(model.Id);
+
+				retorno = new UsuarioViewModel(usuario);
+				retorno.AcessoValido = true;
+				return retorno;
+			}
+		} catch (BDException e) {
 			return new UsuarioViewModel();
-		}		
+		}
+
+		return new UsuarioViewModel();
 	}
 
 	@POST
 	@Path("/manipular")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Retorno Manipular (UsuarioViewModel model)
-	{
+	public Retorno Manipular(UsuarioViewModel model) {
 		Retorno retorno = new Retorno();
-		
-		try 
-		{
-			UsuarioModel usuarioModel = new UsuarioModel(model);
-			
-			if (usuarioModel.getPerfil() == EPerfil.COLABORADOR && !SetorDAL.Existe(usuarioModel.getCodSetor()))
-			{
-				retorno.Mensagem = "O setor selecionado não existe";
-			}
-			else
-			{			
-				if (usuarioModel.getId() >= 0) 
-				{
-					UsuarioModel usuario;
-				
-					try
-					{
-						usuario = UsuarioDAL.Buscar(model.Id);
-					}
-					catch (Exception e) {
-						usuario = null;
-					}
-				
-					if (usuario == null)
-					{
-						retorno.Mensagem = "Usuário não encontrado";
-					}
-					else if (usuario.getPerfil() == EPerfil.ADMINISTRADOR && 
-							usuarioModel.getPerfil() != EPerfil.ADMINISTRADOR &&
-							UsuarioDAL.GetQuantidadeAdministradores() == 1
-							)
-					{				
-						retorno.Mensagem = "Não é possível a alterar o perfil deste usuário, pois o mesmo é único administrador no sistema.";
-					}
-					else
-					{
-						if (!usuario.getEmail().equals(usuarioModel.getEmail()) && UsuarioDAL.Existe(usuarioModel.getEmail()))
-						{
+
+		try {
+			if (AcessoDAL.AcessoValido(model.IdAcesso, model.UsuarioId)) {
+				retorno.AcessoValido = true;
+				UsuarioModel usuarioModel = new UsuarioModel(model);
+
+				if (usuarioModel.getPerfil() == EPerfil.COLABORADOR && !SetorDAL.Existe(usuarioModel.getCodSetor())) {
+					retorno.Mensagem = "O setor selecionado não existe";
+				} else {
+					if (usuarioModel.getId() >= 0) {
+						UsuarioModel usuario;
+
+						try {
+							usuario = UsuarioDAL.Buscar(model.Id);
+						} catch (Exception e) {
+							usuario = null;
+						}
+
+						if (usuario == null) {
+							retorno.Mensagem = "Usuário não encontrado";
+						} else if (usuario.getPerfil() == EPerfil.ADMINISTRADOR
+								&& usuarioModel.getPerfil() != EPerfil.ADMINISTRADOR
+								&& UsuarioDAL.GetQuantidadeAdministradores() == 1) {
+							retorno.Mensagem = "Não é possível a alterar o perfil deste usuário, pois o mesmo é único administrador no sistema.";
+						} else {
+							if (!usuario.getEmail().equals(usuarioModel.getEmail())
+									&& UsuarioDAL.Existe(usuarioModel.getEmail())) {
+								retorno.Mensagem = "E-mail já vinculado a outro usuário.";
+							} else if (!usuario.getCpf().equals(usuarioModel.getCpf())
+									&& UsuarioDAL.ExisteCPF(usuarioModel.getCpf())) {
+								retorno.Mensagem = "CPF já vinculado a outro usuário.";
+							} else if (usuario.getPerfil() == EPerfil.GESTOR
+									&& usuarioModel.getPerfil() != EPerfil.GESTOR
+									&& SetorDAL.ContemGestor(usuarioModel.getId())) {
+								retorno.Mensagem = "Há setores vinculados a este gestor, favor remover o vinculo para continuar.";
+							} else {
+								if (usuario.getPerfil() == EPerfil.COLABORADOR
+										&& usuarioModel.getPerfil() != EPerfil.COLABORADOR) {
+									// Remove as solicitações criadas pelo usuário
+									SolicitacaoViagemDAL.DeleterPorusuario(usuario.getId());
+								}
+
+								retorno.Sucesso = UsuarioDAL.Alterar(usuarioModel);
+							}
+						}
+					} else {
+						if (UsuarioDAL.Existe(usuarioModel.getEmail())) {
 							retorno.Mensagem = "E-mail já vinculado a outro usuário.";
-						}
-						else if (!usuario.getCpf().equals(usuarioModel.getCpf()) && UsuarioDAL.ExisteCPF(usuarioModel.getCpf()))
-						{
+						} else if (UsuarioDAL.ExisteCPF(usuarioModel.getCpf())) {
 							retorno.Mensagem = "CPF já vinculado a outro usuário.";
-						}
-						else if (usuario.getPerfil() == EPerfil.GESTOR && usuarioModel.getPerfil() != EPerfil.GESTOR && SetorDAL.ContemGestor(usuarioModel.getId()))
-						{
-							retorno.Mensagem = "Há setores vinculados a este gestor, favor remover o vinculo para continuar.";
-						}
-						else
-						{
-							if (usuario.getPerfil() == EPerfil.COLABORADOR && usuarioModel.getPerfil() != EPerfil.COLABORADOR)
-							{
-								// Remove as solicitações criadas pelo usuário
-								SolicitacaoViagemDAL.DeleterPorusuario(usuario.getId());
-							}														
-							
-							retorno.Sucesso = UsuarioDAL.Alterar(usuarioModel);
+						} else {
+							retorno.Sucesso = UsuarioDAL.Inserir(usuarioModel) >= 0;
 						}
 					}
 				}
-				else
-				{				
-					if (UsuarioDAL.Existe(usuarioModel.getEmail()))
-					{
-						retorno.Mensagem = "E-mail já vinculado a outro usuário.";
-					}
-					else if (UsuarioDAL.ExisteCPF(usuarioModel.getCpf()))
-					{
-						retorno.Mensagem = "CPF já vinculado a outro usuário.";							
-					}
-					else
-					{
-						retorno.Sucesso = UsuarioDAL.Inserir(usuarioModel) >= 0;
-					}
+
+				if (!retorno.Sucesso && (retorno.Mensagem == null || retorno.Mensagem.length() == 0)) {
+					retorno.Mensagem = "Houve um erro ao realiza a ação, favor contactar o suporte.";
 				}
 			}
-			
-			if (!retorno.Sucesso && (retorno.Mensagem == null || retorno.Mensagem.length() == 0)) 
-			{
-				retorno.Mensagem = "Houve um erro ao realiza a ação, favor contactar o suporte.";
-			}
-		
-		} 
-		catch (Exception e) 
-		{
+		} catch (Exception e) {
 			retorno.Mensagem = "Houve um erro ao realiza a ação: " + e.getMessage();
 		}
-		
+
 		return retorno;
 	}
-	
+
 	@POST
 	@Path("/remover")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Retorno Remover (UsuarioViewModel model)
-	{
+	public Retorno Remover(UsuarioViewModel model) {
 		Retorno retorno = new Retorno();
-		
-		try 
-		{
-			UsuarioModel usuario;
-			
-			try
-			{
-				usuario = UsuarioDAL.Buscar(model.Id);
-			}
-			catch (Exception e) 
-			{
-				usuario = null;
-			}
-			
-			if (usuario != null) 
-			{
-				if (usuario.getPerfil() == EPerfil.GESTOR && SetorDAL.ContemGestor(usuario.getId()))
-				{
-					retorno.Mensagem = "Um ou mais setores estão vinculados a este gestor, remova o vinculo na tela de setores para continuar.";
+
+		try {
+			if (AcessoDAL.AcessoValido(model.IdAcesso, model.UsuarioId)) {
+				retorno.AcessoValido = true;
+				UsuarioModel usuario;
+
+				try {
+					usuario = UsuarioDAL.Buscar(model.Id);
+				} catch (Exception e) {
+					usuario = null;
 				}
-				else if (usuario.getPerfil() == EPerfil.ADMINISTRADOR && UsuarioDAL.GetQuantidadeAdministradores() == 1)
-				{
-					retorno.Mensagem = "Este administrado não pode ser removido pois ele é o único no sistema.";	
+
+				if (usuario != null) {
+					if (usuario.getPerfil() == EPerfil.GESTOR && SetorDAL.ContemGestor(usuario.getId())) {
+						retorno.Mensagem = "Um ou mais setores estão vinculados a este gestor, remova o vinculo na tela de setores para continuar.";
+					} else if (usuario.getPerfil() == EPerfil.ADMINISTRADOR
+							&& UsuarioDAL.GetQuantidadeAdministradores() == 1) {
+						retorno.Mensagem = "Este administrado não pode ser removido pois ele é o único no sistema.";
+					} else {
+						// Remove as solicitações criadas pelo usuário
+						SolicitacaoViagemDAL.DeleterPorusuario(model.Id);
+
+						// Remove o usuário.
+						retorno.Sucesso = UsuarioDAL.Deleter(model.Id);
+					}
+				} else {
+					retorno.Mensagem = "Usuário não encontrado";
 				}
-				else
-				{
-					// Remove as solicitações criadas pelo usuário
-					SolicitacaoViagemDAL.DeleterPorusuario(model.Id);
-					
-					// Remove o usuário.
-					retorno.Sucesso = UsuarioDAL.Deleter(model.Id);					
+
+				if (!retorno.Sucesso && (retorno.Mensagem == null || retorno.Mensagem.length() == 0)) {
+					retorno.Mensagem = "Houve um erro ao realiza a ação, favor contactar o suporte.";
 				}
 			}
-			else
-			{
-				retorno.Mensagem = "Usuário não encontrado";
-			}
-			
-			if (!retorno.Sucesso && (retorno.Mensagem == null || retorno.Mensagem.length() == 0)) 
-			{
-				retorno.Mensagem = "Houve um erro ao realiza a ação, favor contactar o suporte.";
-			}		
-		} 
-		catch (Exception e) 
-		{
+		} catch (Exception e) {
 			retorno.Mensagem = "Houve um erro ao realiza a ação: " + e.getMessage();
 		}
-		
+
 		return retorno;
 	}
-	
+
 	@POST
 	@Path("/listarGestores")
 	@Produces(MediaType.APPLICATION_JSON)
-	public UsuarioViewModel ListarGestores()
-	{		
-		UsuarioViewModel retorno;
-		
+	public UsuarioViewModel ListarGestores(AcessoModel acesso) {
+		UsuarioViewModel retorno = new UsuarioViewModel();
+
 		try {
-			List<UsuarioModel> lista = UsuarioDAL.Listar(true);
-			retorno = new UsuarioViewModel(lista);
-			retorno.Sucesso = true;
-			
-		} catch (BDException e) 
-		{
+			if (AcessoDAL.AcessoValido(acesso.IdAcesso, acesso.UsuarioId)) {
+				retorno.AcessoValido = true;
+				List<UsuarioModel> lista = UsuarioDAL.Listar(true);
+				retorno = new UsuarioViewModel(lista);
+				retorno.Sucesso = true;
+			}
+		} catch (BDException e) {
 			retorno = new UsuarioViewModel();
 			retorno.Mensagem = "Falha ao realizar a listagem de usuários.";
 		}
-		
+
 		return retorno;
 	}
 }

@@ -13,4 +13,5 @@ public class LoginViewModel extends Retorno {
 	@XmlElement public Integer Id;
 	@XmlElement public EPerfil Perfil;
 	@XmlElement public String Nome;
+	@XmlElement public int AcessoId;
 }

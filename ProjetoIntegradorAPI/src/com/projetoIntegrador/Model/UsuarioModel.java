@@ -3,7 +3,7 @@ package com.projetoIntegrador.Model;
 import com.projetoIntegrador.Enumerador.EPerfil;
 import com.projetoIntegrador.ViewModel.UsuarioViewModel;
 
-public class UsuarioModel {
+public class UsuarioModel extends AcessoModel {
 
 	public UsuarioModel ()
 	{

@@ -7,7 +7,7 @@ import java.util.Date;
 import com.projetoIntegrador.Enumerador.EStatus;
 import com.projetoIntegrador.ViewModel.SolicitacaoViagemViewModel;
 
-public class SolicitacaoViagemModel {
+public class SolicitacaoViagemModel extends AcessoModel {
 
 	private int id;
 	private int idUsuario;
