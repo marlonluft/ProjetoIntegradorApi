@@ -31,12 +31,12 @@ public class AcessoDAL {
 	public static Boolean AcessoValido(int idAcesso, int idUsuario ) throws BDException {
 		Connection conexao = Conexao.getConexao();
 		try {
-			PreparedStatement pst = conexao.prepareStatement("SELECT max(idacesso) FROM ACESSO WHERE idusuario = ?;");
+			PreparedStatement pst = conexao.prepareStatement("SELECT max(id) AS 'id' FROM ACESSO WHERE idusuario = ?;");
 			pst.setInt(1, idUsuario);
 			
 			ResultSet rs = pst.executeQuery();
 			if (rs.first()) {
-				return rs.getInt("ID") == idAcesso;
+				return rs.getInt("id") == idAcesso;
 			}
 			return false;
  		} catch (Exception e) {

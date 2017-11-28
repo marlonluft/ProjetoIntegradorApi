@@ -8,7 +8,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.xml.bind.annotation.XmlElement;
 
 import com.projetoIntegrador.Conexao.Conexao;
 import com.projetoIntegrador.DAL.AcessoDAL;
@@ -30,12 +29,11 @@ public class SolicitacaoController {
 	@Path("/listar")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public SolicitacaoViagemViewModel Listar(@XmlElement int idAcesso, @XmlElement int usuarioId) {
+	public SolicitacaoViagemViewModel Listar(int idAcesso, int usuarioId) {
 		SolicitacaoViagemViewModel retorno = new SolicitacaoViagemViewModel();
 
 		try {
-			if (AcessoDAL.AcessoValido(idAcesso, usuarioId)) {
-				retorno.AcessoValido = true;
+			if (AcessoDAL.AcessoValido(idAcesso, usuarioId)) {				
 				List<SolicitacaoViagemModel> lista = null;
 
 				UsuarioModel usuario = UsuarioDAL.Buscar(usuarioId);
@@ -48,6 +46,7 @@ public class SolicitacaoController {
 				}
 
 				retorno = new SolicitacaoViagemViewModel(lista);
+				retorno.AcessoValido = true;
 				retorno.Sucesso = true;
 			}
 
@@ -149,7 +148,7 @@ public class SolicitacaoController {
 	@Path("/remover")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Retorno Remover(@XmlElement String id, @XmlElement int idAcesso, @XmlElement int usuarioId) {
+	public Retorno Remover(String id, int idAcesso, int usuarioId) {
 		Retorno retorno = new Retorno();
 
 		try {

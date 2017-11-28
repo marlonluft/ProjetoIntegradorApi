@@ -56,10 +56,10 @@ public class UsuarioController {
 		UsuarioViewModel retorno = new UsuarioViewModel();
 
 		try {
-			if (AcessoDAL.AcessoValido(acesso.IdAcesso, acesso.UsuarioId)) {
-				retorno.AcessoValido = true;
+			if (AcessoDAL.AcessoValido(acesso.IdAcesso, acesso.UsuarioId)) {				
 				List<UsuarioModel> lista = UsuarioDAL.Listar();
 				retorno = new UsuarioViewModel(lista);
+				retorno.AcessoValido = true;
 				retorno.Sucesso = true;
 			}
 		} catch (BDException e) {
@@ -218,10 +218,10 @@ public class UsuarioController {
 		UsuarioViewModel retorno = new UsuarioViewModel();
 
 		try {
-			if (AcessoDAL.AcessoValido(acesso.IdAcesso, acesso.UsuarioId)) {
-				retorno.AcessoValido = true;
+			if (AcessoDAL.AcessoValido(acesso.IdAcesso, acesso.UsuarioId)) {				
 				List<UsuarioModel> lista = UsuarioDAL.Listar(true);
 				retorno = new UsuarioViewModel(lista);
+				retorno.AcessoValido = true;
 				retorno.Sucesso = true;
 			}
 		} catch (BDException e) {

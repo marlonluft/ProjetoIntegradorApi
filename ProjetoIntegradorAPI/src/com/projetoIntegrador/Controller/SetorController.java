@@ -30,10 +30,10 @@ public class SetorController {
 		SetorViewModel retorno = new SetorViewModel();
 
 		try {
-			if (AcessoDAL.AcessoValido(acesso.IdAcesso, acesso.UsuarioId)) {
-				retorno.AcessoValido = true;
+			if (AcessoDAL.AcessoValido(acesso.IdAcesso, acesso.UsuarioId)) {				
 				List<SetorModel> lista = SetorDAL.Listar();
 				retorno = new SetorViewModel(lista);
+				retorno.AcessoValido = true;
 				retorno.Sucesso = true;
 			}
 		} catch (BDException e) {
