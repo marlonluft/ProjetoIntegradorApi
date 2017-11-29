@@ -17,8 +17,10 @@ import com.projetoIntegrador.DAL.UsuarioDAL;
 import com.projetoIntegrador.Enumerador.EPerfil;
 import com.projetoIntegrador.Enumerador.EStatus;
 import com.projetoIntegrador.Exceptions.BDException;
+import com.projetoIntegrador.Model.AcessoModel;
 import com.projetoIntegrador.Model.SolicitacaoViagemModel;
 import com.projetoIntegrador.Model.UsuarioModel;
+import com.projetoIntegrador.ViewModel.ExcluirSolicitacaoViewModel;
 import com.projetoIntegrador.ViewModel.Retorno;
 import com.projetoIntegrador.ViewModel.SolicitacaoViagemViewModel;
 
@@ -29,20 +31,20 @@ public class SolicitacaoController {
 	@Path("/listar")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public SolicitacaoViagemViewModel Listar(int idAcesso, int usuarioId) {
+	public SolicitacaoViagemViewModel Listar(AcessoModel acesso) {
 		SolicitacaoViagemViewModel retorno = new SolicitacaoViagemViewModel();
 
 		try {
-			if (AcessoDAL.AcessoValido(idAcesso, usuarioId)) {				
+			if (AcessoDAL.AcessoValido(acesso.IdAcesso, acesso.UsuarioId)) {				
 				List<SolicitacaoViagemModel> lista = null;
 
-				UsuarioModel usuario = UsuarioDAL.Buscar(usuarioId);
+				UsuarioModel usuario = UsuarioDAL.Buscar(acesso.UsuarioId);
 				if (usuario == null) {
 					throw new Exception("Usuário logado não encontrado.");
 				} else if (usuario.getPerfil() == EPerfil.GESTOR) {
-					lista = SolicitacaoViagemDAL.Listar(usuarioId, true);
+					lista = SolicitacaoViagemDAL.Listar(acesso.UsuarioId, true);
 				} else {
-					lista = SolicitacaoViagemDAL.Listar(usuarioId, false);
+					lista = SolicitacaoViagemDAL.Listar(acesso.UsuarioId, false);
 				}
 
 				retorno = new SolicitacaoViagemViewModel(lista);
@@ -148,13 +150,13 @@ public class SolicitacaoController {
 	@Path("/remover")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Retorno Remover(String id, int idAcesso, int usuarioId) {
+	public Retorno Remover(ExcluirSolicitacaoViewModel model) {
 		Retorno retorno = new Retorno();
 
 		try {
-			if (AcessoDAL.AcessoValido(idAcesso, usuarioId)) {
+			if (AcessoDAL.AcessoValido(model.IdAcesso, model.UsuarioId)) {
 				retorno.AcessoValido = true;
-				if (SolicitacaoViagemDAL.Deleter(Integer.parseInt(id))) {
+				if (SolicitacaoViagemDAL.Deleter(Integer.parseInt(model.id))) {
 					retorno.Sucesso = true;
 				} else {
 					retorno.Mensagem = "A solicitação de viagem a ser removida não foi encontrada.";
